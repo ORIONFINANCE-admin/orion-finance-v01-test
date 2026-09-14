@@ -44,30 +44,61 @@ export async function openEditCardSheet(context, card) {
     });
 }
 export function openEditDebtSheet(context, debt) {
-    const priority = selectorField('Prioridade', [
-        { value: 'high', label: 'Alta' }, { value: 'medium', label: 'Média' }, { value: 'low', label: 'Baixa' }
-    ], debt.priority ?? 'medium');
-    const name = textField('Nome', debt.name);
-    const creditor = textField('Credor', debt.creditor ?? '');
-    const settlement = moneyField('Oferta de quitação');
+    const name = textField('Qual é a dívida?', debt.name);
+    const creditor = textField('Para quem você deve?', debt.creditor ?? '');
+    const hasOffer = selectorField('Existe uma oferta para quitar esta dívida?', [
+        { value: 'no', label: 'Não' }, { value: 'yes', label: 'Sim' }
+    ], debt.settlementOffer !== undefined ? 'yes' : 'no');
+    const settlement = moneyField('Valor da oferta');
     if (debt.settlementOffer !== undefined)
         settlement.value = centsToInput(debt.settlementOffer);
-    const expiry = textField('Validade da oferta', debt.offerExpiry ?? '', 'date');
+    const expiry = textField('Até quando vale a oferta?', debt.offerExpiry ?? '', 'date');
+    const offerFields = el('div', 'form-stack debt-offer-fields', [
+        labeledField('Valor para quitar', settlement),
+        labeledField('Validade da oferta (opcional)', expiry)
+    ]);
+    offerFields.hidden = hasOffer.getValue() !== 'yes';
+    hasOffer.element.addEventListener('selectorchange', () => {
+        offerFields.hidden = hasOffer.getValue() !== 'yes';
+    });
+    const priority = selectorField('Como você quer tratar essa dívida?', [
+        { value: 'high', label: 'Quero priorizar' },
+        { value: 'medium', label: 'Prioridade normal' },
+        { value: 'low', label: 'Pode esperar' }
+    ], debt.priority ?? null);
     const note = textField('Observação', debt.note ?? '');
-    const warning = el('div', 'inline-warning', ['O saldo-base e as taxas históricas não são reescritos por esta edição. Pagamentos continuam sendo fatos separados.']);
-    const form = el('form', 'form-stack', [priority.element, labeledField('Nome', name), labeledField('Credor', creditor),
-        labeledField('Oferta de quitação', settlement), labeledField('Validade da oferta', expiry), labeledField('Observação', note), warning]);
+    const warning = el('div', 'inline-warning', ['O saldo-base (valor inicial registrado), os juros e o tipo ficam preservados. Os pagamentos continuam atualizando quanto ainda falta pagar.']);
+    const advanced = el('details', 'form-disclosure', [
+        el('summary', 'form-disclosure-summary', [
+            el('span', '', [el('strong', '', ['Mais detalhes']), el('small', '', ['Prioridade e observações opcionais.'])]),
+            el('span', 'form-disclosure-chevron', ['⌄'])
+        ]),
+        el('div', 'form-disclosure-content form-stack', [priority.element, labeledField('Observação', note), warning])
+    ]);
+    const form = el('form', 'form-stack', [
+        labeledField('Qual é a dívida?', name),
+        labeledField('Para quem você deve? (opcional)', creditor),
+        hasOffer.element,
+        offerFields,
+        advanced
+    ]);
     const save = submitButton('Salvar alterações');
     form.append(save);
     const close = showSheet('Editar dívida', form);
     form.addEventListener('submit', (event) => {
         event.preventDefault();
+        if (hasOffer.getValue() === 'yes' && !settlement.value) {
+            showToast('Informe o valor da oferta para quitar.', 'error');
+            return;
+        }
         save.disabled = true;
         void updateDebtDetails(context.repositories.debts, context.lifecycle, {
-            profileId: context.profile.id, debtId: debt.id, name: name.value,
+            profileId: context.profile.id,
+            debtId: debt.id,
+            name: name.value,
             ...(creditor.value.trim() ? { creditor: creditor.value.trim() } : {}),
-            ...(settlement.value ? { settlementOffer: settlement.value } : {}),
-            ...(expiry.value ? { offerExpiry: expiry.value } : {}),
+            ...(hasOffer.getValue() === 'yes' && settlement.value ? { settlementOffer: settlement.value } : {}),
+            ...(hasOffer.getValue() === 'yes' && expiry.value ? { offerExpiry: expiry.value } : {}),
             ...(priority.getValue() ? { priority: priority.getValue() } : {}),
             ...(note.value.trim() ? { note: note.value.trim() } : {})
         }).then(() => done(close, 'Dívida atualizada.', context)).catch((error) => fail(save, error, 'Falha ao atualizar dívida.'));

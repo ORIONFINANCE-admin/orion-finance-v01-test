@@ -4,13 +4,13 @@ import { createEntityId } from '../shared/ids.js';
 export async function createDebt(repository, input) {
     const name = input.name.trim();
     if (!name)
-        throw new TypeError('Informe o nome da dívida.');
+        throw new TypeError('Informe qual é a dívida.');
     const openingBalance = parseMajorToCents(input.openingBalance);
     if (openingBalance <= 0)
-        throw new RangeError('Saldo da dívida deve ser maior que zero.');
+        throw new RangeError('Informe quanto ainda falta pagar.');
     const settlementOffer = input.settlementOffer ? parseMajorToCents(input.settlementOffer) : undefined;
     if (settlementOffer !== undefined && settlementOffer <= 0)
-        throw new RangeError('Oferta de quitação deve ser maior que zero.');
+        throw new RangeError('O valor da oferta deve ser maior que zero.');
     const now = new Date().toISOString();
     const debt = {
         id: createEntityId('debt'), profileId: input.profileId, name, openingBalance, active: true,

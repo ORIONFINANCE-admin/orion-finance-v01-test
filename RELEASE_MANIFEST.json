@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "product": "Orion Finance",
-  "appVersion": "0.1.0-development.12.6",
+  "appVersion": "0.1.0-development.12.7",
   "phase": 12,
   "classification": "PWA TESTÁVEL — PODE IR AO GITHUB PARA TESTE",
   "runtimeOnly": true,
@@ -26,7 +26,7 @@
     {
       "path": "dist/app/version.js",
       "bytes": 189,
-      "sha256": "96c49b1a49fa95726f9d821ba2e408c0237080df801edb3188764e47403dba06"
+      "sha256": "9aca1cd1a720f65a8738226714332132bfc62c922540a805e15403ef58de7f60"
     },
     {
       "path": "dist/application/accounts/create-account.js",
@@ -105,8 +105,8 @@
     },
     {
       "path": "dist/application/debts/create-debt.js",
-      "bytes": 1762,
-      "sha256": "303bf005258cb4716da2dbde332f7e1cb8d26df33bbeae1f4b2710a089c56139"
+      "bytes": 1751,
+      "sha256": "5ca07973128f6ebab756f87060987f22c0acaf6ce55aca22f28a6e29d0c4f30a"
     },
     {
       "path": "dist/application/debts/pay-debt.js",
@@ -115,8 +115,8 @@
     },
     {
       "path": "dist/application/debts/update-debt.js",
-      "bytes": 1135,
-      "sha256": "936846bfbbf2813ba92f5618a124b47b5769aff18cac38fdc873f065207e3101"
+      "bytes": 1132,
+      "sha256": "c4d7e15e71f7be1db6e505ce1f33549803da0b9ebe48f743aad05a3d0940419d"
     },
     {
       "path": "dist/application/investments/create-instrument.js",
@@ -680,13 +680,13 @@
     },
     {
       "path": "dist/ui/screens/planning/debt-forms.js",
-      "bytes": 5065,
-      "sha256": "90f8263985cd3bc3ae7384f9a9482654abcb768af8f0104bdbaee8dace926e36"
+      "bytes": 6984,
+      "sha256": "9dda1e3dc425e0d2aef45c5fcc06a0c8c190999573ce94e8d5528f67cabd086c"
     },
     {
       "path": "dist/ui/screens/planning/lifecycle-forms.js",
-      "bytes": 12147,
-      "sha256": "2544250e61f2d71debf31cba25fd533293a027f2e900e1d18076ea725858bbcf"
+      "bytes": 13517,
+      "sha256": "3a3425665520c56f1d75a1592530a2d103e30c0511b82c8f45bf42c92eb2ec3d"
     },
     {
       "path": "dist/ui/screens/planning/recurrence-forms.js",
@@ -731,7 +731,7 @@
     {
       "path": "service-worker.js",
       "bytes": 8275,
-      "sha256": "57d45984c0e881ca1ae43372422b2183ac8adf3f42f3fdb4359a2187541f9df4"
+      "sha256": "e7af24fd5b279ebf5a9d25080de264cb0a5427ab3b792b65fd3257c3051fa87a"
     },
     {
       "path": "styles/base.css",
@@ -745,8 +745,8 @@
     },
     {
       "path": "styles/screens.css",
-      "bytes": 17051,
-      "sha256": "173614cbe523a72c00cef12f0bb339873ba8ff3aadfe26a408387fe4f0ae176c"
+      "bytes": 18027,
+      "sha256": "452c73af3fcb4ac6d039535eedecf54035c31704b6a2259172e51b2b7fed76e9"
     },
     {
       "path": "styles/tokens.css",

@@ -6,10 +6,10 @@ export async function updateDebtDetails(repository, gateway, input) {
         throw new TypeError('Dívida não encontrada para o perfil ativo.');
     const name = input.name.trim();
     if (!name)
-        throw new TypeError('Informe o nome da dívida.');
+        throw new TypeError('Informe qual é a dívida.');
     const settlementOffer = input.settlementOffer ? parseMajorToCents(input.settlementOffer) : undefined;
     if (settlementOffer !== undefined && settlementOffer <= 0)
-        throw new RangeError('Oferta de quitação deve ser maior que zero.');
+        throw new RangeError('O valor da oferta deve ser maior que zero.');
     const offerExpiry = input.offerExpiry ? requireISODate(input.offerExpiry) : undefined;
     return gateway.update(input.profileId, 'debt', {
         ...current,
