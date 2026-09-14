@@ -1,0 +1,21 @@
+{
+  "id": "./",
+  "name": "Orion Finance",
+  "short_name": "Orion",
+  "description": "Finanças pessoais e patrimônio com clareza.",
+  "lang": "pt-BR",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#020912",
+  "theme_color": "#020912",
+  "icons": [
+    {
+      "src": "./assets/orion-icon-1254.png",
+      "sizes": "1254x1254",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

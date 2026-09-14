@@ -1,0 +1,25 @@
+*{box-sizing:border-box;min-width:0}
+html,body,#app{width:100%;height:100%;margin:0}
+html{background:var(--bg-deep);-webkit-text-size-adjust:100%;text-rendering:optimizeLegibility}
+body{overflow:hidden;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",Inter,system-ui,sans-serif;overscroll-behavior:none}
+button,input{font:inherit;color:inherit}
+button{border:0;background:none;padding:0;-webkit-tap-highlight-color:transparent}
+button:not(:disabled){cursor:pointer}
+button:disabled{opacity:.55}
+input{font-size:16px}
+svg{display:block;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.icon{width:21px;height:21px}
+.app-shell{position:relative;width:100%;height:100dvh;overflow:hidden;background:
+radial-gradient(circle at 78% 11%,rgba(41,147,255,.22) 0 1px,transparent 1.8px),
+radial-gradient(circle at 23% 28%,rgba(240,183,67,.64) 0 1px,transparent 1.7px),
+radial-gradient(circle at 65% 58%,rgba(79,164,255,.20) 0 1px,transparent 1.6px),
+linear-gradient(180deg,#020812,#03111e 45%,#020812)}
+.app-shell::before{content:"";position:absolute;z-index:0;left:-28%;right:-28%;top:calc(-165px + var(--safe-top));height:260px;border-radius:50%;border-bottom:1px solid rgba(60,159,255,.58);background:radial-gradient(ellipse at 58% 85%,rgba(9,65,119,.58),rgba(3,25,47,.74) 46%,transparent 70%);box-shadow:0 24px 70px rgba(0,92,220,.16);pointer-events:none}
+.app-header{position:absolute;z-index:20;left:0;right:0;top:0;height:calc(var(--header-h) + var(--safe-top));padding:calc(10px + var(--safe-top)) var(--page-pad) 8px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(73,113,155,.18);background:linear-gradient(180deg,rgba(1,7,14,.78),rgba(2,11,20,.34));backdrop-filter:blur(14px)}
+.app-content{position:absolute;z-index:2;left:0;right:0;top:calc(var(--header-h) + var(--safe-top));bottom:calc(var(--dock-h) + var(--dock-bottom) + 14px);overflow:hidden}
+.screen{width:100%;height:100%;padding:15px var(--page-pad) 24px;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.screen::-webkit-scrollbar,.sheet-body::-webkit-scrollbar{display:none}
+.boot-state,.fatal-state,.error-state{height:100%;display:grid;place-content:center;gap:8px;padding:32px;text-align:center;color:var(--muted)}
+.fatal-state strong,.error-state strong{color:var(--text);font-size:18px}
+.sheet-open body{overflow:hidden}
+@media(max-width:390px){:root{--page-pad:13px;--header-h:68px;--dock-h:64px}}
