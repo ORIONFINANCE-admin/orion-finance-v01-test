@@ -4,6 +4,7 @@ import { updateAssetDetails } from '../../../application/assets/update-asset.js'
 import { updateAllocationDetails } from '../../../application/allocations/update-allocation.js';
 import { updateRecurrenceDetails } from '../../../application/recurrences/update-recurrence.js';
 import { el } from '../../dom.js';
+import { icon } from '../../icons.js';
 import { labeledField, moneyField, selectorField, textField } from '../../components/fields.js';
 import { showSheet } from '../../components/sheets.js';
 import { showToast } from '../../components/feedback.js';
@@ -71,7 +72,7 @@ export function openEditDebtSheet(context, debt) {
     const advanced = el('details', 'form-disclosure', [
         el('summary', 'form-disclosure-summary', [
             el('span', '', [el('strong', '', ['Mais detalhes']), el('small', '', ['Prioridade e observações opcionais.'])]),
-            el('span', 'form-disclosure-chevron', ['⌄'])
+            el('span', 'form-disclosure-chevron', [icon('chevron', 'form-disclosure-chevron-icon')])
         ]),
         el('div', 'form-disclosure-content form-stack', [priority.element, labeledField('Observação', note), warning])
     ]);

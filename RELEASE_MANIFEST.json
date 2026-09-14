@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "product": "Orion Finance",
-  "appVersion": "0.1.0-development.12.7",
+  "appVersion": "0.1.0-development.12.8",
   "phase": 12,
   "classification": "PWA TESTÁVEL — PODE IR AO GITHUB PARA TESTE",
   "runtimeOnly": true,
@@ -26,7 +26,7 @@
     {
       "path": "dist/app/version.js",
       "bytes": 189,
-      "sha256": "9aca1cd1a720f65a8738226714332132bfc62c922540a805e15403ef58de7f60"
+      "sha256": "29deca349d9c0b8adf87deba76c688de4fba3223da1f66043452faa023e2d97f"
     },
     {
       "path": "dist/application/accounts/create-account.js",
@@ -660,8 +660,8 @@
     },
     {
       "path": "dist/ui/screens/planning.js",
-      "bytes": 4332,
-      "sha256": "8cdfae3dd42878efdd10a8fdfd39be9646767268e7fd1312604ac99934444a23"
+      "bytes": 4412,
+      "sha256": "0810076617cadb12e579f1926c9d5e28e1eec189e2fd79dbc931109ee031da96"
     },
     {
       "path": "dist/ui/screens/planning/allocation-forms.js",
@@ -680,13 +680,13 @@
     },
     {
       "path": "dist/ui/screens/planning/debt-forms.js",
-      "bytes": 6984,
-      "sha256": "9dda1e3dc425e0d2aef45c5fcc06a0c8c190999573ce94e8d5528f67cabd086c"
+      "bytes": 7065,
+      "sha256": "f9fe2ae24612baa4e84b6a4993b7c939285edf6191ce89e7200d7b12487594b6"
     },
     {
       "path": "dist/ui/screens/planning/lifecycle-forms.js",
-      "bytes": 13517,
-      "sha256": "3a3425665520c56f1d75a1592530a2d103e30c0511b82c8f45bf42c92eb2ec3d"
+      "bytes": 13598,
+      "sha256": "88f6e52b329b0b98a1a363d9317d77df5ff1392072d78dc53215490e1f6d47f6"
     },
     {
       "path": "dist/ui/screens/planning/recurrence-forms.js",
@@ -731,7 +731,7 @@
     {
       "path": "service-worker.js",
       "bytes": 8275,
-      "sha256": "e7af24fd5b279ebf5a9d25080de264cb0a5427ab3b792b65fd3257c3051fa87a"
+      "sha256": "1a7b11ace2edf7f13ef1b4b098077867b7b9fcf1756d1b2df62256d7c1f47673"
     },
     {
       "path": "styles/base.css",
@@ -745,8 +745,8 @@
     },
     {
       "path": "styles/screens.css",
-      "bytes": 18027,
-      "sha256": "452c73af3fcb4ac6d039535eedecf54035c31704b6a2259172e51b2b7fed76e9"
+      "bytes": 18971,
+      "sha256": "ad21f33a9ae9e89c6b71ed9571365ad494bc4a21c28ba693bdb9cb7424761d58"
     },
     {
       "path": "styles/tokens.css",

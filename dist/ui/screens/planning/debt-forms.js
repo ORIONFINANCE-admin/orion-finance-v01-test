@@ -1,6 +1,7 @@
 import { createDebt } from '../../../application/debts/create-debt.js';
 import { payDebt } from '../../../application/debts/pay-debt.js';
 import { el } from '../../dom.js';
+import { icon } from '../../icons.js';
 import { labeledField, moneyField, selectorField, textField } from '../../components/fields.js';
 import { showSheet } from '../../components/sheets.js';
 import { showToast } from '../../components/feedback.js';
@@ -48,7 +49,7 @@ export function openCreateDebtSheet(context) {
     const advanced = el('details', 'form-disclosure', [
         el('summary', 'form-disclosure-summary', [
             el('span', '', [el('strong', '', ['Mais detalhes']), el('small', '', ['Juros, classificação e outras informações opcionais.'])]),
-            el('span', 'form-disclosure-chevron', ['⌄'])
+            el('span', 'form-disclosure-chevron', [icon('chevron', 'form-disclosure-chevron-icon')])
         ]),
         el('div', 'form-disclosure-content form-stack', [
             institution.element,

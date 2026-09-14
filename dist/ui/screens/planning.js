@@ -1,6 +1,7 @@
 import { getFinancialPosition } from '../../application/planning/get-financial-position.js';
 import { formatBRL, sumCents, ZERO_CENTS } from '../../domain/money/money.js';
 import { el } from '../dom.js';
+import { icon } from '../icons.js';
 import { renderAllocationsSection, renderAssetsSection, renderCardsSection, renderDebtsSection, renderRecurrencesSection } from './planning/sections.js';
 export async function renderPlanning(repositories, profile, lifecycle, onChanged, onOpenInvestments) {
     const position = await getFinancialPosition(repositories, profile.id);
@@ -48,7 +49,7 @@ export async function renderPlanning(repositories, profile, lifecycle, onChanged
                 el('strong', '', ['Mais recursos']),
                 el('small', '', ['Patrimônio, cartões, investimentos e controles mais detalhados.'])
             ]),
-            el('span', 'planning-advanced-chevron', ['⌄'])
+            el('span', 'planning-advanced-chevron', [icon('chevron', 'planning-advanced-chevron-icon')])
         ]),
         el('div', 'planning-advanced-content', [
             el('section', 'planning-grid', [
