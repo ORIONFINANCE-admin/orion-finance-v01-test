@@ -63,10 +63,14 @@ function openCreateAccountSheet(repositories, profile, onChanged) {
     const nameInput = textField('Nome da conta');
     const balanceInput = moneyField('Saldo inicial');
     nameInput.placeholder = 'Ex.: Conta principal';
+    let lastAutoName = '';
     institution.element.addEventListener('selectorchange', () => {
         const selected = getInstitution(institution.getValue() ?? undefined);
-        if (selected && !nameInput.value.trim())
+        const currentName = nameInput.value.trim();
+        if (selected && (!currentName || currentName === lastAutoName)) {
             nameInput.value = selected.name;
+            lastAutoName = selected.name;
+        }
     });
     const form = el('form', 'form-stack', [institution.element, type.element, labeledField('Nome', nameInput), labeledField('Saldo inicial', balanceInput)]);
     const save = el('button', 'btn primary full-width', ['Salvar conta']);

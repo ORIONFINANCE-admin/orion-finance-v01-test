@@ -103,14 +103,18 @@ export function showOnboarding(repositories, profile, callbacks) {
         const institutions = listInstitutions();
         const institution = selectorField('Instituição', institutions.map((item) => ({ value: item.id, label: item.name })), 'inter');
         const type = selectorField('Tipo de conta', ACCOUNT_TYPE_OPTIONS, 'checking');
-        const accountName = textField('Nome da conta');
+        const customInstitutionName = textField('Nome da instituição');
+        const customInstitutionNameField = labeledField('Nome da instituição', customInstitutionName);
         const openingBalance = moneyField('Saldo inicial');
-        accountName.placeholder = 'Ex.: Conta principal';
-        institution.element.addEventListener('selectorchange', () => {
-            const selected = getInstitution(institution.getValue() ?? undefined);
-            if (selected && !accountName.value.trim())
-                accountName.value = selected.name;
-        });
+        customInstitutionName.placeholder = 'Ex.: Cooperativa local';
+        const syncCustomInstitutionName = () => {
+            const isCustom = institution.getValue() === 'custom';
+            customInstitutionNameField.hidden = !isCustom;
+            if (!isCustom)
+                customInstitutionName.value = '';
+        };
+        institution.element.addEventListener('selectorchange', syncCustomInstitutionName);
+        syncCustomInstitutionName();
         const finishWithoutAccount = async () => {
             try {
                 const updated = await updateProfileIdentity(repositories.profiles, profile, { displayName: name.value, completeOnboarding: true });
@@ -131,11 +135,19 @@ export function showOnboarding(repositories, profile, callbacks) {
             }
             save.disabled = true;
             const institutionData = getInstitution(institutionId);
+            const accountName = institutionId === 'custom'
+                ? customInstitutionName.value.trim()
+                : institutionData?.name ?? 'Conta principal';
+            if (!accountName) {
+                save.disabled = false;
+                showToast('Informe o nome da instituição.', 'error');
+                return;
+            }
             void createAccount(repositories.accounts, {
                 profileId: profile.id,
                 institutionId,
                 type: accountType,
-                name: accountName.value || institutionData?.name || 'Conta principal',
+                name: accountName,
                 openingBalance: openingBalance.value || '0',
                 color: institutionData?.color ?? '#58708f'
             }).then(async () => {
@@ -146,7 +158,7 @@ export function showOnboarding(repositories, profile, callbacks) {
                 showToast('Sua primeira conta foi criada.', 'success');
             }).catch((error) => { save.disabled = false; showToast(error instanceof Error ? error.message : 'Não foi possível criar a conta.', 'error'); });
         });
-        content.replaceChildren(el('div', 'onboarding-step', ['PASSO 3 DE 3']), el('h3', '', ['Cadastre sua primeira conta']), el('p', '', ['O saldo inicial é o ponto de partida. Depois, toda alteração financeira entra como um fato auditável.']), institution.element, type.element, labeledField('Nome', accountName), labeledField('Saldo inicial', openingBalance));
+        content.replaceChildren(el('div', 'onboarding-step', ['PASSO 3 DE 3']), el('h3', '', ['Cadastre sua primeira conta']), el('p', '', ['O saldo inicial é o ponto de partida. Depois, toda alteração financeira entra como um fato auditável.']), institution.element, type.element, customInstitutionNameField, labeledField('Saldo inicial', openingBalance));
         actions.replaceChildren(button('btn secondary full', 'Agora não', () => void finishWithoutAccount()), save);
     };
     renderWelcome();
