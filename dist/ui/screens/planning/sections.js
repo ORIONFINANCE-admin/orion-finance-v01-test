@@ -14,8 +14,11 @@ function actionButton(label, onClick, className = 'text-action') {
     button.addEventListener('click', onClick);
     return button;
 }
-function sectionHeader(title, action) {
-    return el('div', 'section-title-row', [el('h2', '', [title]), action]);
+function sectionHeader(title, action, support) {
+    return el('div', 'section-title-row', [
+        el('div', '', [el('h2', '', [title]), support ? el('p', 'section-support', [support]) : null]),
+        action
+    ]);
 }
 function empty(text) {
     return el('div', 'empty-card compact-empty', [el('span', '', [text])]);
@@ -46,7 +49,7 @@ export function renderCardsSection(context, position) {
     return section;
 }
 export function renderDebtsSection(context, position) {
-    const section = el('section', 'section-block module-section', [sectionHeader('Dívidas', actionButton('+ Dívida', () => openCreateDebtSheet(context)))]);
+    const section = el('section', 'section-block module-section', [sectionHeader('Dívidas', actionButton('+ Dívida', () => openCreateDebtSheet(context)), 'Veja quanto ainda falta pagar e registre os pagamentos conforme acontecerem.')]);
     if (position.debts.length === 0) {
         section.append(empty('Nenhuma dívida cadastrada.'));
         return section;
@@ -59,7 +62,7 @@ export function renderDebtsSection(context, position) {
             pay.disabled = true;
         const more = actionButton('•••', () => showEntityActions(item.debt.name, () => openEditDebtSheet(context, item.debt), () => confirmEntityDeactivation(context.lifecycle, context.profile.id, 'debt', item.debt.id, 'Dívida', context.onChanged)), 'icon-text-action');
         list.append(el('article', 'module-row', [
-            el('div', 'module-copy', [el('strong', '', [item.debt.name]), el('small', '', [item.position.settlementOffer !== undefined ? `Acordo: ${formatBRL(item.position.settlementOffer)}` : 'Passivo oficial'])]),
+            el('div', 'module-copy', [el('strong', '', [item.debt.name]), el('small', '', [item.position.settlementOffer !== undefined ? `Oferta para quitar: ${formatBRL(item.position.settlementOffer)}` : (item.debt.creditor?.trim() || 'Dívida em aberto')])]),
             el('div', 'module-value', [el('small', '', ['SALDO']), el('strong', item.position.outstanding > ZERO_CENTS ? 'negative-text' : 'positive-text', [value])]),
             actions(pay, more)
         ]));
@@ -87,27 +90,34 @@ export function renderAssetsSection(context, position) {
     return section;
 }
 export function renderAllocationsSection(context, position) {
-    const section = el('section', 'section-block module-section', [sectionHeader('Alocações', actionButton('+ Alocar', () => { void openCreateAllocationSheet(context); }))]);
+    const section = el('section', 'section-block module-section', [sectionHeader('Metas e reservas', actionButton('+ Meta', () => { void openCreateAllocationSheet(context); }), 'Separe dinheiro para objetivos sem transformar isso em despesa.')]);
     if (position.allocations.length === 0) {
-        section.append(empty('Organize finalidades sem criar despesa ou transferência.'));
+        section.append(empty('Você ainda não separou dinheiro para nenhuma meta ou reserva.'));
         return section;
     }
     const list = el('div', 'module-list');
     for (const item of position.allocations) {
-        const more = actionButton('•••', () => showEntityActions(item.name, () => openEditAllocationSheet(context, item), () => confirmEntityDeactivation(context.lifecycle, context.profile.id, 'allocation', item.id, 'Alocação', context.onChanged)), 'icon-text-action');
+        const more = actionButton('•••', () => showEntityActions(item.name, () => openEditAllocationSheet(context, item), () => confirmEntityDeactivation(context.lifecycle, context.profile.id, 'allocation', item.id, 'Meta ou reserva', context.onChanged)), 'icon-text-action');
+        const goalSummary = item.targetAmount !== undefined
+            ? `Objetivo: ${formatBRL(item.targetAmount)}${item.goalDate ? ` · até ${formatGoalDate(item.goalDate)}` : ''}`
+            : (item.protected ? 'Valor reservado para este objetivo' : 'Acompanhamento sem reduzir o valor livre');
         list.append(el('article', 'module-row', [
-            el('div', 'module-copy', [el('strong', '', [item.name]), el('small', '', [item.protected ? 'Protegido' : 'Flexível'])]),
-            el('div', 'module-value', [el('small', '', ['ALOCADO']), el('strong', '', [formatBRL(item.amount)])]),
+            el('div', 'module-copy', [el('strong', '', [item.name]), el('small', '', [goalSummary])]),
+            el('div', 'module-value', [el('small', '', ['SEPARADO']), el('strong', '', [formatBRL(item.amount)])]),
             actions(more)
         ]));
     }
     section.append(list);
     return section;
 }
+function formatGoalDate(value) {
+    const [year, month, day] = value.split('-');
+    return year && month && day ? `${day}/${month}/${year}` : value;
+}
 export function renderRecurrencesSection(context, position, now = new Date()) {
-    const section = el('section', 'section-block module-section', [sectionHeader('Compromissos', actionButton('+ Recorrência', () => { void openCreateRecurrenceSheet(context); }))]);
+    const section = el('section', 'section-block module-section', [sectionHeader('Próximos compromissos', actionButton('+ Compromisso', () => { void openCreateRecurrenceSheet(context); }), 'Contas e recebimentos que você espera neste mês.')]);
     if (position.recurrences.length === 0) {
-        section.append(empty('Recorrências são previsão e não alteram saldo sozinhas.'));
+        section.append(empty('Adicione contas ou recebimentos que costumam se repetir. Eles só viram movimentação quando realmente acontecerem.'));
         return section;
     }
     const month = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
@@ -139,10 +149,10 @@ export function renderRecurrencesSection(context, position, now = new Date()) {
                         symbol: '↔',
                         onSelect: () => { void openLinkRecurrencePaymentSheet(context, recurrence, month); }
                     }];
-        const more = actionButton('•••', () => showEntityActions(recurrence.name, () => { void openEditRecurrenceSheet(context, recurrence); }, () => confirmEntityDeactivation(context.lifecycle, context.profile.id, 'recurrence', recurrence.id, 'Recorrência', context.onChanged), paymentAction), 'icon-text-action');
+        const more = actionButton('•••', () => showEntityActions(recurrence.name, () => { void openEditRecurrenceSheet(context, recurrence); }, () => confirmEntityDeactivation(context.lifecycle, context.profile.id, 'recurrence', recurrence.id, 'Compromisso', context.onChanged), paymentAction), 'icon-text-action');
         list.append(el('article', 'module-row', [
             el('div', 'module-copy', [el('strong', '', [recurrence.name]), el('small', '', [`Dia ${recurrence.dayOfMonth} · ${statusLabel}`])]),
-            el('div', 'module-value', [el('small', '', [recurrence.kind === 'expense' ? 'SAÍDA PREVISTA' : 'ENTRADA PREVISTA']), el('strong', recurrence.kind === 'expense' ? 'negative-text' : 'positive-text', [formatBRL(recurrence.amount)])]),
+            el('div', 'module-value', [el('small', '', [recurrence.kind === 'expense' ? 'A PAGAR' : 'A RECEBER']), el('strong', recurrence.kind === 'expense' ? 'negative-text' : 'positive-text', [formatBRL(recurrence.amount)])]),
             actions(monthAction, more)
         ]));
     }

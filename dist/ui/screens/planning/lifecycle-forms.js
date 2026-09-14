@@ -102,22 +102,23 @@ export function openEditAssetSheet(context, asset) {
     });
 }
 export function openEditAllocationSheet(context, allocation) {
-    const protection = selectorField('Proteção', [
-        { value: 'yes', label: 'Protegido' }, { value: 'no', label: 'Flexível' }
+    const protection = selectorField('Esse valor reduz o Livre para decidir?', [
+        { value: 'yes', label: 'Sim, quero reservar', description: 'O Orion separa esse valor do que está livre para gastar.' },
+        { value: 'no', label: 'Não, só quero acompanhar', description: 'A meta continua visível sem reduzir o valor livre.' }
     ], allocation.protected ? 'yes' : 'no');
     const name = textField('Nome', allocation.name);
-    const amount = moneyField('Valor');
+    const amount = moneyField('Valor separado');
     amount.value = centsToInput(allocation.amount);
-    const target = moneyField('Meta');
+    const target = moneyField('Objetivo total');
     if (allocation.targetAmount !== undefined)
         target.value = centsToInput(allocation.targetAmount);
     const goalDate = textField('Prazo', allocation.goalDate ?? '', 'date');
     const description = textField('Descrição', allocation.description ?? '');
-    const form = el('form', 'form-stack', [labeledField('Nome', name), labeledField('Valor', amount), labeledField('Meta', target),
-        labeledField('Prazo', goalDate), protection.element, labeledField('Descrição', description)]);
+    const form = el('form', 'form-stack', [labeledField('Nome', name), labeledField('Valor separado', amount), labeledField('Objetivo total (opcional)', target),
+        labeledField('Prazo (opcional)', goalDate), protection.element, labeledField('Descrição', description)]);
     const save = submitButton('Salvar alterações');
     form.append(save);
-    const close = showSheet('Editar alocação', form);
+    const close = showSheet('Editar meta ou reserva', form);
     form.addEventListener('submit', (event) => {
         event.preventDefault();
         const protectedChoice = protection.getValue();
@@ -128,7 +129,7 @@ export function openEditAllocationSheet(context, allocation) {
             profileId: context.profile.id, allocationId: allocation.id, name: name.value, amount: amount.value,
             ...(target.value ? { targetAmount: target.value } : {}), ...(goalDate.value ? { goalDate: goalDate.value } : {}),
             protected: protectedChoice === 'yes', ...(description.value.trim() ? { description: description.value.trim() } : {})
-        }).then(() => done(close, 'Alocação atualizada.', context)).catch((error) => fail(save, error, 'Falha ao atualizar alocação.'));
+        }).then(() => done(close, 'Meta ou reserva atualizada.', context)).catch((error) => fail(save, error, 'Falha ao atualizar meta ou reserva.'));
     });
 }
 export async function openEditRecurrenceSheet(context, recurrence) {

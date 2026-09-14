@@ -26,7 +26,7 @@ export async function openCreateRecurrenceSheet(context) {
     const note = textField('Observação');
     const form = el('form', 'form-stack', [kind.element, priority.element, labeledField('Nome', name), labeledField('Valor previsto', amount),
         labeledField('Dia de vencimento', day), labeledField('Mês inicial', start), labeledField('Mês final (opcional)', end), account.element, labeledField('Observação', note)]);
-    const save = el('button', 'btn primary full-width', ['Salvar recorrência']);
+    const save = el('button', 'btn primary full-width', ['Salvar compromisso']);
     save.type = 'submit';
     form.append(save);
     const close = showSheet('Novo compromisso', form);
@@ -42,24 +42,24 @@ export async function openCreateRecurrenceSheet(context) {
             ...(priority.getValue() ? { priority: priority.getValue() } : {}),
             ...(note.value.trim() ? { note: note.value.trim() } : {}),
             ...(account.getValue() ? { accountId: account.getValue() } : {})
-        }).then(() => { close(); showToast('Recorrência criada.', 'success'); context.onChanged(); })
-            .catch((error) => { save.disabled = false; showToast(error instanceof Error ? error.message : 'Falha ao criar recorrência.', 'error'); });
+        }).then(() => { close(); showToast('Compromisso criado.', 'success'); context.onChanged(); })
+            .catch((error) => { save.disabled = false; showToast(error instanceof Error ? error.message : 'Falha ao criar compromisso.', 'error'); });
     });
 }
 export function confirmIgnoreRecurrenceMonth(context, recurrenceId, month) {
-    showConfirmation('Ignorar neste mês', 'A recorrência continuará existindo nos próximos meses. Nenhum saldo será alterado.', 'Ignorar mês', () => {
+    showConfirmation('Ignorar neste mês', 'O compromisso continuará existindo nos próximos meses. Nenhum saldo será alterado.', 'Ignorar mês', () => {
         void updateRecurrenceMonth(context.repositories.recurrenceMonths, context.repositories.recurrences, context.repositories.transactions, {
             profileId: context.profile.id, recurrenceId, month, status: 'ignored'
-        }).then(() => { showToast('Recorrência ignorada neste mês.', 'success'); context.onChanged(); })
-            .catch((error) => showToast(error instanceof Error ? error.message : 'Falha ao atualizar recorrência.', 'error'));
+        }).then(() => { showToast('Compromisso ignorado neste mês.', 'success'); context.onChanged(); })
+            .catch((error) => showToast(error instanceof Error ? error.message : 'Falha ao atualizar compromisso.', 'error'));
     });
 }
 export function confirmReconsiderRecurrenceMonth(context, recurrenceId, month) {
     showConfirmation('Voltar a considerar neste mês', 'O compromisso volta ao planejamento deste mês sem criar movimentação financeira.', 'Voltar a considerar', () => {
         void updateRecurrenceMonth(context.repositories.recurrenceMonths, context.repositories.recurrences, context.repositories.transactions, {
             profileId: context.profile.id, recurrenceId, month, status: 'planned'
-        }).then(() => { showToast('Recorrência voltou ao planejamento deste mês.', 'success'); context.onChanged(); })
-            .catch((error) => showToast(error instanceof Error ? error.message : 'Falha ao atualizar recorrência.', 'error'));
+        }).then(() => { showToast('Compromisso voltou ao planejamento deste mês.', 'success'); context.onChanged(); })
+            .catch((error) => showToast(error instanceof Error ? error.message : 'Falha ao atualizar compromisso.', 'error'));
     });
 }
 export async function openLinkRecurrencePaymentSheet(context, recurrence, month) {

@@ -1,40 +1,67 @@
 import { getFinancialPosition } from '../../application/planning/get-financial-position.js';
-import { formatBRL, sumCents } from '../../domain/money/money.js';
+import { formatBRL, sumCents, ZERO_CENTS } from '../../domain/money/money.js';
 import { el } from '../dom.js';
 import { renderAllocationsSection, renderAssetsSection, renderCardsSection, renderDebtsSection, renderRecurrencesSection } from './planning/sections.js';
 export async function renderPlanning(repositories, profile, lifecycle, onChanged, onOpenInvestments) {
     const position = await getFinancialPosition(repositories, profile.id);
     const context = { repositories, profile, lifecycle, onChanged };
     const root = el('div', 'screen planning-screen', [
-        el('div', 'screen-heading', [el('div', '', [el('h1', '', ['Planejar']), el('p', '', ['Fatos, previsões e patrimônio sem dupla contagem.'])])])
+        el('div', 'screen-heading', [el('div', '', [
+                el('h1', '', ['Planejar']),
+                el('p', '', ['Organize o que precisa pagar, o que deve e seus objetivos.'])
+            ])])
     ]);
     root.append(el('section', 'planning-card', [
         el('small', 'eyebrow', ['LIVRE PARA DECIDIR']),
         el('strong', `planning-value ${position.freeToDecide < 0 ? 'negative-text' : ''}`, [formatBRL(position.freeToDecide)]),
+        el('p', '', ['O que sobra do saldo disponível depois dos compromissos e valores que você separou para metas.']),
         el('div', 'planning-breakdown', [
-            summaryLine('Disponível agora', formatBRL(position.availableNow)),
-            summaryLine('Compromissos previstos', `− ${formatBRL(position.commitments.plannedExpense)}`),
-            summaryLine('Alocações', `− ${formatBRL(position.totalAllocated)}`)
+            summaryLine('Saldo disponível', formatBRL(position.availableNow)),
+            summaryLine('Contas e compromissos', `− ${formatBRL(position.commitments.plannedExpense)}`),
+            summaryLine('Metas e reservas', `− ${formatBRL(position.totalAllocated)}`)
         ])
     ]));
-    root.append(el('section', 'planning-grid', [
-        miniMetric('PATRIMÔNIO LÍQUIDO', formatBRL(position.netWorth.netWorth), 'Ativos − passivos'),
-        miniMetric('PASSIVOS', formatBRL(position.netWorth.liabilities), 'Dívidas + faturas'),
-        miniMetric('ATIVOS', formatBRL(position.netWorth.assets), 'Caixa + investimentos'),
-        miniMetric('ATRASADO', formatBRL(position.commitments.overdueExpense), 'Compromissos vencidos')
-    ]));
+    if (position.commitments.overdueExpense > ZERO_CENTS) {
+        root.append(el('section', 'planning-alert', [
+            el('strong', '', ['Há compromissos atrasados']),
+            el('span', '', [`${formatBRL(position.commitments.overdueExpense)} ainda precisa ser resolvido.`])
+        ]));
+    }
+    root.append(renderRecurrencesSection(context, position), renderDebtsSection(context, position), renderAllocationsSection(context, position));
     const investmentHub = el('section', 'section-block investment-hub-card', [
-        el('div', 'section-title-row', [el('div', '', [el('h2', '', ['Investimentos']), el('p', 'section-support', ['Carteira, cotações e Radar em um módulo separado do planejamento mensal.'])])]),
+        el('div', 'section-title-row', [el('div', '', [
+                el('h2', '', ['Investimentos']),
+                el('p', 'section-support', ['Carteira, cotações e Radar ficam disponíveis quando você quiser aprofundar.'])
+            ])]),
         el('div', 'investment-hub-summary', [
-            miniMetric('POSIÇÕES', String(position.investments.filter((item) => item.position.quantity > 0).length), 'Ativos com posição'),
-            miniMetric('VALOR', formatBRL(sumCents(position.investments.map((item) => item.currentValue))), 'Mercado ou último custo conhecido')
+            miniMetric('POSIÇÕES', String(position.investments.filter((item) => item.position.quantity > 0).length), 'Investimentos com saldo'),
+            miniMetric('VALOR', formatBRL(sumCents(position.investments.map((item) => item.currentValue))), 'Valor atual conhecido')
         ])
     ]);
     const openInvestments = el('button', 'btn secondary full-width', ['Abrir Investimentos e Radar']);
     openInvestments.type = 'button';
     openInvestments.addEventListener('click', onOpenInvestments);
     investmentHub.append(openInvestments);
-    root.append(renderRecurrencesSection(context, position), renderAllocationsSection(context, position), renderCardsSection(context, position), renderDebtsSection(context, position), investmentHub, renderAssetsSection(context, position));
+    const moreResources = el('details', 'planning-advanced', [
+        el('summary', 'planning-advanced-summary', [
+            el('span', 'planning-advanced-copy', [
+                el('strong', '', ['Mais recursos']),
+                el('small', '', ['Patrimônio, cartões, investimentos e controles mais detalhados.'])
+            ]),
+            el('span', 'planning-advanced-chevron', ['⌄'])
+        ]),
+        el('div', 'planning-advanced-content', [
+            el('section', 'planning-grid', [
+                miniMetric('PATRIMÔNIO', formatBRL(position.netWorth.netWorth), 'Tudo o que você tem menos o que deve'),
+                miniMetric('DÍVIDAS E FATURAS', formatBRL(position.netWorth.liabilities), 'Obrigações registradas'),
+                miniMetric('DINHEIRO E INVESTIMENTOS', formatBRL(position.netWorth.assets), 'Valores que formam seu patrimônio')
+            ]),
+            renderCardsSection(context, position),
+            investmentHub,
+            renderAssetsSection(context, position)
+        ])
+    ]);
+    root.append(moreResources);
     return root;
 }
 function summaryLine(label, value) {

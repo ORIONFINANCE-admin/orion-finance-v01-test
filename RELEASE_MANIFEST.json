@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "product": "Orion Finance",
-  "appVersion": "0.1.0-development.12.5",
+  "appVersion": "0.1.0-development.12.6",
   "phase": 12,
   "classification": "PWA TESTÁVEL — PODE IR AO GITHUB PARA TESTE",
   "runtimeOnly": true,
@@ -26,7 +26,7 @@
     {
       "path": "dist/app/version.js",
       "bytes": 189,
-      "sha256": "ccdd8616315119ce0736d001921e849eb2178a09eaaf8f6ed5ac2f7bd5050afd"
+      "sha256": "96c49b1a49fa95726f9d821ba2e408c0237080df801edb3188764e47403dba06"
     },
     {
       "path": "dist/application/accounts/create-account.js",
@@ -660,13 +660,13 @@
     },
     {
       "path": "dist/ui/screens/planning.js",
-      "bytes": 3269,
-      "sha256": "1ec09981c568709abd29a24424aae84cac0c4cb22a0e437c815848a3a994af62"
+      "bytes": 4332,
+      "sha256": "8cdfae3dd42878efdd10a8fdfd39be9646767268e7fd1312604ac99934444a23"
     },
     {
       "path": "dist/ui/screens/planning/allocation-forms.js",
-      "bytes": 2571,
-      "sha256": "8d09b25d777c03623524532b29de6bcf29157155176010cad08c233ce968e339"
+      "bytes": 2761,
+      "sha256": "a4a5b77ae5fe2012cbd94e3250d482fa2b47ffbc0e57a525c65e03e4b5240a55"
     },
     {
       "path": "dist/ui/screens/planning/asset-forms.js",
@@ -685,18 +685,18 @@
     },
     {
       "path": "dist/ui/screens/planning/lifecycle-forms.js",
-      "bytes": 11867,
-      "sha256": "0c2fac07b0492799e305141e8ba31946035c86aa38fe1ee23b2ab4d35e39c761"
+      "bytes": 12147,
+      "sha256": "2544250e61f2d71debf31cba25fd533293a027f2e900e1d18076ea725858bbcf"
     },
     {
       "path": "dist/ui/screens/planning/recurrence-forms.js",
-      "bytes": 8053,
-      "sha256": "e8eaf217b03af27f4962e2ae8355e80afec8d15e1c08747f7f092b227e9b35b9"
+      "bytes": 8045,
+      "sha256": "96ec2f222cd6e9c4c31e0d8a91408983a8e40903493d18437727e003a8ff2df0"
     },
     {
       "path": "dist/ui/screens/planning/sections.js",
-      "bytes": 10208,
-      "sha256": "167028cfbfdc3ee071f7d7a6b58335daf0495f63d5e30c5aa3afb2ac43e5d164"
+      "bytes": 11047,
+      "sha256": "a1175b2410fa6d4fef76ddc47b7b9ef18d4d4715d44875eed07358d9a1619094"
     },
     {
       "path": "dist/ui/screens/planning/shared.js",
@@ -731,7 +731,7 @@
     {
       "path": "service-worker.js",
       "bytes": 8275,
-      "sha256": "5b82650d8901f22282fd2b522a783795d379c05ba8aecdac88568157cc8afa13"
+      "sha256": "57d45984c0e881ca1ae43372422b2183ac8adf3f42f3fdb4359a2187541f9df4"
     },
     {
       "path": "styles/base.css",
@@ -745,8 +745,8 @@
     },
     {
       "path": "styles/screens.css",
-      "bytes": 15778,
-      "sha256": "36aed361bf708cd3f8f9ad2a1e9f27f11567de2d54c7bfaffdcb3023add78305"
+      "bytes": 17051,
+      "sha256": "173614cbe523a72c00cef12f0bb339873ba8ff3aadfe26a408387fe4f0ae176c"
     },
     {
       "path": "styles/tokens.css",
