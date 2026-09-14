@@ -6,7 +6,7 @@ import { openCreateCardSheet, openPayCardSheet } from './card-forms.js';
 import { openCreateDebtSheet, openPayDebtSheet } from './debt-forms.js';
 import { openCreateAssetSheet, openAssetOperationSheet } from './asset-forms.js';
 import { openCreateAllocationSheet } from './allocation-forms.js';
-import { confirmIgnoreRecurrenceMonth, openCreateRecurrenceSheet } from './recurrence-forms.js';
+import { confirmIgnoreRecurrenceMonth, confirmReconsiderRecurrenceMonth, openCreateRecurrenceSheet } from './recurrence-forms.js';
 import { openEditAllocationSheet, openEditAssetSheet, openEditCardSheet, openEditDebtSheet, openEditRecurrenceSheet } from './lifecycle-forms.js';
 function actionButton(label, onClick, className = 'text-action') {
     const button = el('button', className, [label]);
@@ -117,14 +117,18 @@ export function renderRecurrencesSection(context, position, now = new Date()) {
         const monthState = position.recurrenceMonths.find((item) => item.recurrenceId === recurrence.id && item.month === month);
         const status = effectiveRecurrenceStatus(recurrence, month, monthState, today);
         const statusLabel = status === 'planned' ? 'Previsto' : status === 'overdue' ? 'Atrasado' : status === 'paid' ? 'Pago' : 'Ignorado';
-        const ignore = actionButton('Ignorar', () => confirmIgnoreRecurrenceMonth(context, recurrence.id, month));
-        if (status === 'paid' || status === 'ignored')
-            ignore.disabled = true;
+        const monthAction = status === 'ignored'
+            ? actionButton('Voltar a considerar', () => confirmReconsiderRecurrenceMonth(context, recurrence.id, month))
+            : status === 'paid'
+                ? actionButton('Pago', () => { })
+                : actionButton('Ignorar', () => confirmIgnoreRecurrenceMonth(context, recurrence.id, month));
+        if (status === 'paid')
+            monthAction.disabled = true;
         const more = actionButton('•••', () => showEntityActions(recurrence.name, () => { void openEditRecurrenceSheet(context, recurrence); }, () => confirmEntityDeactivation(context.lifecycle, context.profile.id, 'recurrence', recurrence.id, 'Recorrência', context.onChanged)), 'icon-text-action');
         list.append(el('article', 'module-row', [
             el('div', 'module-copy', [el('strong', '', [recurrence.name]), el('small', '', [`Dia ${recurrence.dayOfMonth} · ${statusLabel}`])]),
             el('div', 'module-value', [el('small', '', [recurrence.kind === 'expense' ? 'SAÍDA PREVISTA' : 'ENTRADA PREVISTA']), el('strong', recurrence.kind === 'expense' ? 'negative-text' : 'positive-text', [formatBRL(recurrence.amount)])]),
-            actions(ignore, more)
+            actions(monthAction, more)
         ]));
     }
     section.append(list);

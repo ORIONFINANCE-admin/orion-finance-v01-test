@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "product": "Orion Finance",
-  "appVersion": "0.1.0-development.12.3",
+  "appVersion": "0.1.0-development.12.4",
   "phase": 12,
   "classification": "PWA TESTÁVEL — PODE IR AO GITHUB PARA TESTE",
   "runtimeOnly": true,
@@ -26,7 +26,7 @@
     {
       "path": "dist/app/version.js",
       "bytes": 189,
-      "sha256": "6bc1de29ac606c1cee617ca25efe69bf292ab06213db5f9ef3cdaba6823d1619"
+      "sha256": "03410ffea520a5be047cdecfc66827ec882320c80b62c9ee56db66a3044a3270"
     },
     {
       "path": "dist/application/accounts/create-account.js",
@@ -680,13 +680,13 @@
     },
     {
       "path": "dist/ui/screens/planning/recurrence-forms.js",
-      "bytes": 3721,
-      "sha256": "b7b615a65efb7289029d2465845e2852dd5b5bc082501c8bece469fda659db85"
+      "bytes": 4461,
+      "sha256": "61281641c2ef88621e781aeef8537d189e0d735cd76216b962557b1254a0cbd6"
     },
     {
       "path": "dist/ui/screens/planning/sections.js",
-      "bytes": 8959,
-      "sha256": "ab70c332a37d542abf19bec7cee8f9b052b5fe4db7d33a44e03938b7114f7ec3"
+      "bytes": 9226,
+      "sha256": "caf09da206fa0301e7aae224a1b86b3c4a2f64fedab33b1f8bbae3a899bcbb51"
     },
     {
       "path": "dist/ui/screens/planning/shared.js",
@@ -721,7 +721,7 @@
     {
       "path": "service-worker.js",
       "bytes": 8176,
-      "sha256": "b8b352f681628f1c551b5f28492ced45db17b405673986fc11a1a571462abb5f"
+      "sha256": "dad169afe842215dc534e674b445d953cefa0f21fe8315f21b0ac7ef827097d6"
     },
     {
       "path": "styles/base.css",

@@ -52,3 +52,11 @@ export function confirmIgnoreRecurrenceMonth(context, recurrenceId, month) {
             .catch((error) => showToast(error instanceof Error ? error.message : 'Falha ao atualizar recorrência.', 'error'));
     });
 }
+export function confirmReconsiderRecurrenceMonth(context, recurrenceId, month) {
+    showConfirmation('Voltar a considerar neste mês', 'O compromisso volta ao planejamento deste mês sem criar movimentação financeira.', 'Voltar a considerar', () => {
+        void updateRecurrenceMonth(context.repositories.recurrenceMonths, context.repositories.recurrences, context.repositories.transactions, {
+            profileId: context.profile.id, recurrenceId, month, status: 'planned'
+        }).then(() => { showToast('Recorrência voltou ao planejamento deste mês.', 'success'); context.onChanged(); })
+            .catch((error) => showToast(error instanceof Error ? error.message : 'Falha ao atualizar recorrência.', 'error'));
+    });
+}

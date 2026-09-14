@@ -1,4 +1,4 @@
-const CACHE_NAME = "orion-0-1-0-development-12-3-static-v1";
+const CACHE_NAME = "orion-0-1-0-development-12-4-static-v1";
 const STATIC_PATHS = [
   "./",
   "./index.html",
