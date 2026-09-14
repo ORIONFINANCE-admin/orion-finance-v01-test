@@ -1,7 +1,20 @@
+import { transactionMatchesRecurrence } from '../../domain/recurrences/payment-link.js';
 import { openOrionDatabase, requestToPromise, transactionDone } from './database.js';
 import { STORES } from './schema.js';
 function auditId() {
     return `audit_${crypto.randomUUID()}`;
+}
+async function linkedPaidStates(store, profileId, transactionId) {
+    const states = await requestToPromise(store.getAll());
+    return states.filter((state) => state.profileId === profileId && state.status === 'paid' && state.linkedTransactionId === transactionId);
+}
+async function assertLinkedUpdateCompatible(recurrenceStore, states, next) {
+    for (const state of states) {
+        const recurrence = await requestToPromise(recurrenceStore.get(state.recurrenceId));
+        if (!recurrence || !transactionMatchesRecurrence(recurrence, next, state.month)) {
+            throw new TypeError('Esta movimentação está vinculada a um compromisso pago. Desvincule o pagamento antes de alterar valor, data ou conta.');
+        }
+    }
 }
 function requireOwnedTransaction(value, profileId) {
     if (!value || typeof value !== 'object')
@@ -16,10 +29,14 @@ export class IndexedDbTransactionMutationGateway {
         if (next.profileId !== profileId)
             throw new TypeError('Perfil da movimentação é incompatível.');
         const database = await openOrionDatabase();
-        const unit = database.transaction([STORES.transactions, STORES.auditEvents], 'readwrite');
+        const unit = database.transaction([STORES.transactions, STORES.recurrenceMonths, STORES.recurrences, STORES.auditEvents], 'readwrite');
         const transactions = unit.objectStore(STORES.transactions);
+        const recurrenceMonths = unit.objectStore(STORES.recurrenceMonths);
+        const recurrences = unit.objectStore(STORES.recurrences);
         const audit = unit.objectStore(STORES.auditEvents);
         const previous = requireOwnedTransaction(await requestToPromise(transactions.get(next.id)), profileId);
+        const linkedStates = await linkedPaidStates(recurrenceMonths, profileId, next.id);
+        await assertLinkedUpdateCompatible(recurrences, linkedStates, next);
         const now = new Date().toISOString();
         const updated = { ...next, updatedAt: now };
         const event = {
@@ -33,10 +50,14 @@ export class IndexedDbTransactionMutationGateway {
     }
     async remove(profileId, transactionId) {
         const database = await openOrionDatabase();
-        const unit = database.transaction([STORES.transactions, STORES.auditEvents], 'readwrite');
+        const unit = database.transaction([STORES.transactions, STORES.recurrenceMonths, STORES.auditEvents], 'readwrite');
         const transactions = unit.objectStore(STORES.transactions);
+        const recurrenceMonths = unit.objectStore(STORES.recurrenceMonths);
         const audit = unit.objectStore(STORES.auditEvents);
         const previous = requireOwnedTransaction(await requestToPromise(transactions.get(transactionId)), profileId);
+        const linkedStates = await linkedPaidStates(recurrenceMonths, profileId, transactionId);
+        if (linkedStates.length > 0)
+            throw new TypeError('Esta movimentação está vinculada a um compromisso pago. Desvincule o pagamento antes de excluir.');
         const now = new Date().toISOString();
         const event = {
             id: auditId(), profileId, entityType: 'transaction', entityId: transactionId, action: 'delete',

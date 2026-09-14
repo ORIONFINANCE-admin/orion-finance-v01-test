@@ -1,4 +1,4 @@
-const CACHE_NAME = "orion-0-1-0-development-12-4-static-v1";
+const CACHE_NAME = "orion-0-1-0-development-12-5-static-v1";
 const STATIC_PATHS = [
   "./",
   "./index.html",
@@ -44,6 +44,7 @@ const STATIC_PATHS = [
   "./dist/application/planning/get-financial-position.js",
   "./dist/application/profile/update-profile.js",
   "./dist/application/recurrences/create-recurrence.js",
+  "./dist/application/recurrences/payment-link.js",
   "./dist/application/recurrences/update-recurrence-month.js",
   "./dist/application/recurrences/update-recurrence.js",
   "./dist/application/shared/ids.js",
@@ -96,6 +97,7 @@ const STATIC_PATHS = [
   "./dist/domain/products/policy.js",
   "./dist/domain/rates/rate.js",
   "./dist/domain/recurrences/models.js",
+  "./dist/domain/recurrences/payment-link.js",
   "./dist/domain/recurrences/position.js",
   "./dist/identity/profile.js",
   "./dist/identity/session.js",

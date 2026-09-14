@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "product": "Orion Finance",
-  "appVersion": "0.1.0-development.12.4",
+  "appVersion": "0.1.0-development.12.5",
   "phase": 12,
   "classification": "PWA TESTÁVEL — PODE IR AO GITHUB PARA TESTE",
   "runtimeOnly": true,
@@ -26,7 +26,7 @@
     {
       "path": "dist/app/version.js",
       "bytes": 189,
-      "sha256": "03410ffea520a5be047cdecfc66827ec882320c80b62c9ee56db66a3044a3270"
+      "sha256": "ccdd8616315119ce0736d001921e849eb2178a09eaaf8f6ed5ac2f7bd5050afd"
     },
     {
       "path": "dist/application/accounts/create-account.js",
@@ -199,9 +199,14 @@
       "sha256": "5df35cc728278400add308d7010b6c10f3cc818d21e4db1846c97f296a4f1db2"
     },
     {
+      "path": "dist/application/recurrences/payment-link.js",
+      "bytes": 1848,
+      "sha256": "1a0ee9687fcaa8350e969a2a5867be768d36dbb58515a23f6eea111b67cf6202"
+    },
+    {
       "path": "dist/application/recurrences/update-recurrence-month.js",
-      "bytes": 1152,
-      "sha256": "00b2aa29c70ae5c8fd4addae520fe9f173c20f47dd64ba97cac420ec78e148ec"
+      "bytes": 1572,
+      "sha256": "16e2dd4a64ac4e445205baee75e09ea64704b4bfe754048cab6a13d008598f5c"
     },
     {
       "path": "dist/application/recurrences/update-recurrence.js",
@@ -330,8 +335,8 @@
     },
     {
       "path": "dist/data/indexeddb/transaction-mutations.js",
-      "bytes": 4322,
-      "sha256": "8082b18ae8d788c2c1aa0775d96f2cad358224ec8b0d8aa128cf8669f0b02f6f"
+      "bytes": 5876,
+      "sha256": "86b9657cf7ce4be07f3e43da9ff34f9ca9b28fc06ca406e2d2a51ad652a32306"
     },
     {
       "path": "dist/diagnostics/session-log.js",
@@ -459,6 +464,11 @@
       "sha256": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881"
     },
     {
+      "path": "dist/domain/recurrences/payment-link.js",
+      "bytes": 777,
+      "sha256": "79e9ee676df4e90379530435283a74dba1137737ace7058b2a21ef30d5cf512d"
+    },
+    {
       "path": "dist/domain/recurrences/position.js",
       "bytes": 1796,
       "sha256": "77a3676775b845b627e83840f31e9242bb8483b8e49dd7ee0290e6ba8c5697de"
@@ -565,8 +575,8 @@
     },
     {
       "path": "dist/ui/components/entity-actions.js",
-      "bytes": 2088,
-      "sha256": "977414dc98c8131415e03f8c9f44c2cf61c3fe7f0e436d063adb802b71f88dc0"
+      "bytes": 2680,
+      "sha256": "a936a319b6c9e8f0dc5c384de7ea3d380e475925095a8b01d5d232ecbc916bc6"
     },
     {
       "path": "dist/ui/components/feedback.js",
@@ -680,13 +690,13 @@
     },
     {
       "path": "dist/ui/screens/planning/recurrence-forms.js",
-      "bytes": 4461,
-      "sha256": "61281641c2ef88621e781aeef8537d189e0d735cd76216b962557b1254a0cbd6"
+      "bytes": 8053,
+      "sha256": "e8eaf217b03af27f4962e2ae8355e80afec8d15e1c08747f7f092b227e9b35b9"
     },
     {
       "path": "dist/ui/screens/planning/sections.js",
-      "bytes": 9226,
-      "sha256": "caf09da206fa0301e7aae224a1b86b3c4a2f64fedab33b1f8bbae3a899bcbb51"
+      "bytes": 10208,
+      "sha256": "167028cfbfdc3ee071f7d7a6b58335daf0495f63d5e30c5aa3afb2ac43e5d164"
     },
     {
       "path": "dist/ui/screens/planning/shared.js",
@@ -720,8 +730,8 @@
     },
     {
       "path": "service-worker.js",
-      "bytes": 8176,
-      "sha256": "dad169afe842215dc534e674b445d953cefa0f21fe8315f21b0ac7ef827097d6"
+      "bytes": 8275,
+      "sha256": "5b82650d8901f22282fd2b522a783795d379c05ba8aecdac88568157cc8afa13"
     },
     {
       "path": "styles/base.css",

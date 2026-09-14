@@ -6,7 +6,7 @@ import { openCreateCardSheet, openPayCardSheet } from './card-forms.js';
 import { openCreateDebtSheet, openPayDebtSheet } from './debt-forms.js';
 import { openCreateAssetSheet, openAssetOperationSheet } from './asset-forms.js';
 import { openCreateAllocationSheet } from './allocation-forms.js';
-import { confirmIgnoreRecurrenceMonth, confirmReconsiderRecurrenceMonth, openCreateRecurrenceSheet } from './recurrence-forms.js';
+import { confirmIgnoreRecurrenceMonth, confirmReconsiderRecurrenceMonth, confirmUnlinkRecurrencePayment, openCreateRecurrenceSheet, openLinkRecurrencePaymentSheet } from './recurrence-forms.js';
 import { openEditAllocationSheet, openEditAssetSheet, openEditCardSheet, openEditDebtSheet, openEditRecurrenceSheet } from './lifecycle-forms.js';
 function actionButton(label, onClick, className = 'text-action') {
     const button = el('button', className, [label]);
@@ -124,7 +124,22 @@ export function renderRecurrencesSection(context, position, now = new Date()) {
                 : actionButton('Ignorar', () => confirmIgnoreRecurrenceMonth(context, recurrence.id, month));
         if (status === 'paid')
             monthAction.disabled = true;
-        const more = actionButton('•••', () => showEntityActions(recurrence.name, () => { void openEditRecurrenceSheet(context, recurrence); }, () => confirmEntityDeactivation(context.lifecycle, context.profile.id, 'recurrence', recurrence.id, 'Recorrência', context.onChanged)), 'icon-text-action');
+        const paymentAction = status === 'paid'
+            ? [{
+                    label: recurrence.kind === 'expense' ? 'Desvincular pagamento' : 'Desvincular recebimento',
+                    description: 'Preserva a movimentação e devolve o compromisso ao planejamento do mês.',
+                    symbol: '↶',
+                    onSelect: () => confirmUnlinkRecurrencePayment(context, recurrence, month)
+                }]
+            : status === 'ignored'
+                ? []
+                : [{
+                        label: recurrence.kind === 'expense' ? 'Vincular pagamento' : 'Vincular recebimento',
+                        description: 'Liga uma movimentação real compatível sem criar dupla contagem.',
+                        symbol: '↔',
+                        onSelect: () => { void openLinkRecurrencePaymentSheet(context, recurrence, month); }
+                    }];
+        const more = actionButton('•••', () => showEntityActions(recurrence.name, () => { void openEditRecurrenceSheet(context, recurrence); }, () => confirmEntityDeactivation(context.lifecycle, context.profile.id, 'recurrence', recurrence.id, 'Recorrência', context.onChanged), paymentAction), 'icon-text-action');
         list.append(el('article', 'module-row', [
             el('div', 'module-copy', [el('strong', '', [recurrence.name]), el('small', '', [`Dia ${recurrence.dayOfMonth} · ${statusLabel}`])]),
             el('div', 'module-value', [el('small', '', [recurrence.kind === 'expense' ? 'SAÍDA PREVISTA' : 'ENTRADA PREVISTA']), el('strong', recurrence.kind === 'expense' ? 'negative-text' : 'positive-text', [formatBRL(recurrence.amount)])]),
