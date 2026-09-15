@@ -1,4 +1,4 @@
-import { APP_VERSION, DATA_SCHEMA_VERSION } from '../../app/version.js';
+import { APP_VERSION } from '../../app/version.js';
 import { updateProfileIdentity } from '../../application/profile/update-profile.js';
 import { loadRuntimeConfig } from '../../config/runtime.js';
 import { createProfileBackup } from '../../data/backup/profile.js';
@@ -9,12 +9,9 @@ import { replaceProfileDataAtomically } from '../../data/backup/restore.js';
 import { createFreshProfileData } from '../../data/backup/fresh-profile.js';
 import { readJsonDocument } from '../../data/import/json-document.js';
 import { applyPreparedLegacyMigration, prepareLegacyMigration } from '../../migration/legacy/apply.js';
-import { listDiagnostics } from '../../diagnostics/session-log.js';
 import { createTechnicalReport, serializeTechnicalReport } from '../../diagnostics/technical-report.js';
-import { checkGatewayHealth } from '../../infrastructure/market-data/gateway-health.js';
-import { capabilitiesForPlan } from '../../product/capabilities.js';
-import { DEFAULT_PRIVACY_SUMMARY, MARKET_DATA_DISCLOSURE } from '../../privacy/remote-disclosure.js';
 import { el, button } from '../dom.js';
+import { icon } from '../icons.js';
 import { labeledField, textField } from '../components/fields.js';
 import { showConfirmation } from '../components/sheets.js';
 import { showToast } from '../components/feedback.js';
@@ -23,35 +20,39 @@ function standaloneMode() {
     const nav = navigator;
     return window.matchMedia('(display-mode: standalone)').matches || nav.standalone === true;
 }
-function gatewayLabel(status) {
-    if (status === 'healthy')
-        return 'Online';
-    if (status === 'unavailable')
-        return 'Indisponível';
-    return 'Não configurado';
+function disclosure(title, support, content) {
+    return el('details', 'settings-disclosure', [
+        el('summary', 'settings-disclosure-summary', [
+            el('span', 'settings-disclosure-copy', [el('strong', '', [title]), el('small', '', [support])]),
+            el('span', 'settings-disclosure-chevron', [icon('chevron', 'settings-disclosure-chevron-icon')])
+        ]),
+        el('div', 'settings-disclosure-content', content)
+    ]);
 }
 export async function renderSettings(repositories, profile, onProfileChanged, onDataChanged) {
-    const [runtimeConfig, diagnostics] = await Promise.all([loadRuntimeConfig(), Promise.resolve(listDiagnostics())]);
-    const gatewayHealth = await checkGatewayHealth(runtimeConfig.marketGatewayUrl);
+    const runtimeConfig = await loadRuntimeConfig();
     const root = el('div', 'screen settings-screen', [
-        el('div', 'screen-heading', [el('div', '', [el('h1', '', ['Conta e dados']), el('p', '', ['Perfil, backup, ambiente e diagnóstico do Orion.'])])])
+        el('div', 'screen-heading', [el('div', '', [
+                el('h1', '', ['Perfil e dados']),
+                el('p', '', ['Seu nome, seus dados e as opções essenciais do Orion.'])
+            ])])
     ]);
     const nameInput = textField('Nome', profile.displayName);
     const profileCard = el('section', 'settings-card', [
-        el('div', 'settings-card-heading', [el('h2', '', ['Perfil']), el('span', 'settings-badge', ['LOCAL'])]),
+        el('div', 'settings-card-heading', [el('h2', '', ['Seu perfil'])]),
         labeledField('Como o Orion deve chamar você', nameInput),
-        button('btn primary full', 'Salvar perfil', () => {
+        button('btn primary full', 'Salvar nome', () => {
             void updateProfileIdentity(repositories.profiles, profile, { displayName: nameInput.value, completeOnboarding: true })
-                .then((updated) => { onProfileChanged(updated); showToast('Perfil atualizado.', 'success'); })
-                .catch((error) => showToast(error instanceof Error ? error.message : 'Falha ao atualizar perfil.', 'error'));
+                .then((updated) => { onProfileChanged(updated); showToast('Nome atualizado.', 'success'); })
+                .catch((error) => showToast(error instanceof Error ? error.message : 'Não foi possível atualizar seu nome.', 'error'));
         })
     ]);
-    const exportButton = button('btn secondary full', 'Exportar backup', () => {
+    const exportButton = button('btn secondary full', 'Criar backup', () => {
         void createProfileBackup(repositories, profile).then((backup) => {
             const day = new Date().toISOString().slice(0, 10);
             downloadTextFile(`orion-backup-${day}.json`, serializeBackup(backup));
-            showToast('Backup preparado.', 'success');
-        }).catch((error) => showToast(error instanceof Error ? error.message : 'Falha ao exportar backup.', 'error'));
+            showToast('Backup criado.', 'success');
+        }).catch((error) => showToast(error instanceof Error ? error.message : 'Não foi possível criar o backup.', 'error'));
     });
     const fileInput = el('input', 'visually-hidden');
     fileInput.type = 'file';
@@ -63,16 +64,16 @@ export async function renderSettings(repositories, profile, onProfileChanged, on
         void readJsonDocument(file).then((raw) => {
             const parsed = parseBackup(raw);
             const rebound = rebindSingleProfileBackup(parsed.data, profile);
-            showConfirmation('Restaurar backup?', 'Os dados e preferências deste perfil serão substituídos de forma atômica. O cache de mercado e outros perfis não serão apagados.', 'Restaurar', () => {
+            showConfirmation('Restaurar este backup?', 'Os dados atuais deste perfil serão substituídos pelos dados do arquivo selecionado.', 'Restaurar', () => {
                 void replaceProfileDataAtomically(profile.id, rebound).then(() => {
                     const restoredProfile = rebound.profiles[0];
                     if (restoredProfile)
                         onProfileChanged(restoredProfile);
-                    showToast('Backup restaurado com segurança.', 'success');
+                    showToast('Backup restaurado.', 'success');
                     onDataChanged();
-                }).catch((error) => showToast(error instanceof Error ? error.message : 'Falha ao restaurar backup.', 'error'));
+                }).catch((error) => showToast(error instanceof Error ? error.message : 'Não foi possível restaurar o backup.', 'error'));
             });
-        }).catch((error) => showToast(error instanceof Error ? error.message : 'Backup inválido.', 'error'));
+        }).catch((error) => showToast(error instanceof Error ? error.message : 'Esse arquivo não é um backup válido.', 'error'));
         fileInput.value = '';
     });
     const legacyInput = el('input', 'visually-hidden');
@@ -85,24 +86,24 @@ export async function renderSettings(repositories, profile, onProfileChanged, on
         void readJsonDocument(file).then(async (raw) => {
             const prepared = await prepareLegacyMigration(raw, profile.id);
             const counts = prepared.report.counts;
-            const summary = `${counts.accounts ?? 0} contas · ${counts.transactions ?? 0} movimentações · ${counts.debts ?? 0} dívidas · ${prepared.report.warnings.length} avisos.`;
-            showConfirmation('Migrar Orion anterior?', `O backup legado foi convertido e validado. ${summary} Antes da migração será exportada uma cópia da base atual. Snapshots antigos não serão tratados como autoridade.`, 'Migrar com segurança', () => {
+            const summary = `${counts.accounts ?? 0} contas · ${counts.transactions ?? 0} movimentações · ${counts.debts ?? 0} dívidas.`;
+            showConfirmation('Trazer dados do Orion anterior?', `Encontramos ${summary} Antes de importar, o Orion criará um backup da base atual.`, 'Importar dados', () => {
                 void createProfileBackup(repositories, profile).then(async (currentBackup) => {
                     const stamp = new Date().toISOString().slice(0, 10);
-                    downloadTextFile(`orion-pre-migracao-${stamp}.json`, serializeBackup(currentBackup));
+                    downloadTextFile(`orion-antes-da-importacao-${stamp}.json`, serializeBackup(currentBackup));
                     await applyPreparedLegacyMigration(prepared, profile.id);
                     const migratedProfile = prepared.data.profiles[0];
                     if (migratedProfile)
                         onProfileChanged(migratedProfile);
                     onDataChanged();
-                    showToast('Migração concluída e auditada.', 'success');
-                }).catch((error) => showToast(error instanceof Error ? error.message : 'Falha na migração.', 'error'));
+                    showToast('Dados importados.', 'success');
+                }).catch((error) => showToast(error instanceof Error ? error.message : 'Não foi possível importar os dados.', 'error'));
             });
-        }).catch((error) => showToast(error instanceof Error ? error.message : 'Backup legado incompatível.', 'error'));
+        }).catch((error) => showToast(error instanceof Error ? error.message : 'Esse arquivo não é compatível.', 'error'));
         legacyInput.value = '';
     });
     const resetButton = button('btn secondary full', 'Recomeçar com uma base nova', () => {
-        showConfirmation('Recomeçar com uma base nova?', 'O Orion exportará um backup antes de apagar os dados deste perfil. Depois, o onboarding será aberto novamente para você começar com seus dados reais.', 'Exportar backup e recomeçar', () => {
+        showConfirmation('Recomeçar com uma base nova?', 'O Orion criará um backup antes de limpar os dados deste perfil. Depois, você fará o início novamente.', 'Criar backup e recomeçar', () => {
             resetButton.disabled = true;
             void createProfileBackup(repositories, profile).then(async (backup) => {
                 const day = new Date().toISOString().slice(0, 10);
@@ -111,75 +112,58 @@ export async function renderSettings(repositories, profile, onProfileChanged, on
                 window.location.reload();
             }).catch((error) => {
                 resetButton.disabled = false;
-                showToast(error instanceof Error ? error.message : 'Falha ao preparar uma base nova.', 'error');
+                showToast(error instanceof Error ? error.message : 'Não foi possível preparar uma base nova.', 'error');
             });
         });
     });
     const dataCard = el('section', 'settings-card', [
-        el('div', 'settings-card-heading', [el('h2', '', ['Seus dados'])]),
-        el('p', 'settings-help', ['Backup, restauração e exportação pertencem ao usuário e não dependem de plano futuro.']),
+        el('div', 'settings-card-heading', [el('h2', '', ['Backup'])]),
+        el('p', 'settings-help settings-help-prominent', ['Seus dados ficam neste dispositivo. Crie um backup quando quiser guardar uma cópia de segurança.']),
         exportButton,
-        button('btn secondary full', 'Restaurar backup v0.1', () => fileInput.click()),
-        button('btn secondary full', 'Migrar Orion anterior (JSON/ZIP)', () => legacyInput.click()),
-        resetButton,
-        el('p', 'settings-help', ['Recomeçar exporta uma cópia de segurança antes de limpar somente os dados deste perfil.']),
+        button('btn secondary full', 'Restaurar backup', () => fileInput.click()),
         fileInput,
-        legacyInput
+        legacyInput,
+        disclosure('Outras opções', 'Importar uma base antiga ou começar do zero.', [
+            button('btn secondary full', 'Trazer dados de outro Orion', () => legacyInput.click()),
+            resetButton
+        ])
     ]);
-    const capabilities = capabilitiesForPlan('personal');
-    const technicalReportButton = button('btn secondary full', 'Executar diagnóstico do dispositivo', () => {
+    const technicalReportButton = button('btn secondary full', 'Verificar funcionamento', () => {
         technicalReportButton.disabled = true;
         technicalReportButton.textContent = 'Verificando…';
         void createTechnicalReport(runtimeConfig).then((report) => {
-            const databaseLabel = report.database.status === 'healthy' ? 'Banco local OK' : 'Banco local requer atenção';
-            const pwaLabel = report.device.standalone ? 'PWA standalone' : 'Navegador';
-            showToast(`${databaseLabel} · ${pwaLabel} · SW ${report.device.serviceWorker.controlled ? 'ativo' : 'não controlado'}.`, report.database.status === 'healthy' ? 'success' : 'error');
-        }).catch((error) => showToast(error instanceof Error ? error.message : 'Falha no diagnóstico.', 'error')).finally(() => {
+            const healthy = report.database.status === 'healthy';
+            showToast(healthy ? 'Tudo certo com os dados locais.' : 'O armazenamento local precisa de atenção.', healthy ? 'success' : 'error');
+        }).catch((error) => showToast(error instanceof Error ? error.message : 'Não foi possível verificar o dispositivo.', 'error')).finally(() => {
             technicalReportButton.disabled = false;
-            technicalReportButton.textContent = 'Executar diagnóstico do dispositivo';
+            technicalReportButton.textContent = 'Verificar funcionamento';
         });
     });
-    const exportTechnicalReportButton = button('btn secondary full', 'Exportar relatório técnico', () => {
+    const exportTechnicalReportButton = button('btn secondary full', 'Exportar relatório para suporte', () => {
         exportTechnicalReportButton.disabled = true;
         void createTechnicalReport(runtimeConfig).then((report) => {
             const stamp = new Date().toISOString().replace(/[:.]/g, '-');
-            downloadTextFile(`orion-diagnostico-${stamp}.json`, serializeTechnicalReport(report));
-            showToast('Relatório técnico exportado sem valores financeiros ou identidade do perfil.', 'success');
-        }).catch((error) => showToast(error instanceof Error ? error.message : 'Falha ao exportar diagnóstico.', 'error')).finally(() => {
+            downloadTextFile(`orion-suporte-${stamp}.json`, serializeTechnicalReport(report));
+            showToast('Relatório para suporte criado.', 'success');
+        }).catch((error) => showToast(error instanceof Error ? error.message : 'Não foi possível criar o relatório.', 'error')).finally(() => {
             exportTechnicalReportButton.disabled = false;
         });
     });
-    const diagnosticsCard = el('section', 'settings-card', [
-        el('div', 'settings-card-heading', [el('h2', '', ['Diagnóstico'])]),
-        el('div', 'diagnostic-grid', [
-            el('div', '', [el('small', '', ['Versão']), el('strong', '', [APP_VERSION])]),
-            el('div', '', [el('small', '', ['Schema']), el('strong', '', [String(DATA_SCHEMA_VERSION)])]),
-            el('div', '', [el('small', '', ['Ambiente']), el('strong', '', [standaloneMode() ? 'PWA standalone' : 'Navegador'])]),
-            el('div', '', [el('small', '', ['Conexão']), el('strong', '', [navigator.onLine ? 'Online' : 'Offline'])]),
-            el('div', '', [el('small', '', ['Market Gateway']), el('strong', '', [gatewayLabel(gatewayHealth.status)])]),
-            el('div', '', [el('small', '', ['Capabilities']), el('strong', '', [String(capabilities.size)])]),
-            el('div', '', [el('small', '', ['Eventos da sessão']), el('strong', '', [String(diagnostics.length)])]),
-            el('div', '', [el('small', '', ['Configuração']), el('strong', '', [runtimeConfig.source === 'default' ? 'Local' : runtimeConfig.source])])
-        ]),
-        el('p', 'settings-help', ['O diagnóstico local não envia dados financeiros. Market data é opcional e o Orion continua funcional sem gateway.']),
-        technicalReportButton,
-        exportTechnicalReportButton,
-        el('p', 'settings-help', ['O relatório inclui apenas ambiente técnico, viewport/safe-area, service worker, integridade do banco local e eventos técnicos recentes. Nome, saldos, contas e movimentações não são exportados.'])
+    const supportCard = el('section', 'settings-card settings-card-compact', [
+        disclosure('Ajuda e informações', 'Versão, instalação e ferramentas de suporte.', [
+            el('div', 'settings-simple-info', [
+                el('div', '', [el('span', '', ['Versão']), el('strong', '', [APP_VERSION])]),
+                el('div', '', [el('span', '', ['Conexão']), el('strong', '', [navigator.onLine ? 'Online' : 'Offline'])]),
+                el('div', '', [el('span', '', ['Uso']), el('strong', '', [standaloneMode() ? 'App instalado' : 'Navegador'])])
+            ]),
+            el('p', 'settings-help', ['Seus dados financeiros ficam neste dispositivo e não são enviados automaticamente.']),
+            standaloneMode()
+                ? el('p', 'settings-help', ['O Orion está instalado neste dispositivo.'])
+                : el('p', 'settings-help', ['No iPhone: Safari → Compartilhar → Adicionar à Tela de Início.']),
+            technicalReportButton,
+            exportTechnicalReportButton
+        ])
     ]);
-    const privacyCard = el('section', 'settings-card', [
-        el('div', 'settings-card-heading', [el('h2', '', ['Privacidade']), el('span', 'settings-badge', ['LOCAL-FIRST'])]),
-        el('p', 'settings-help', [DEFAULT_PRIVACY_SUMMARY.storage]),
-        el('p', 'settings-help', [DEFAULT_PRIVACY_SUMMARY.telemetry]),
-        el('p', 'settings-help', [DEFAULT_PRIVACY_SUMMARY.marketData]),
-        el('p', 'settings-help', [`Gateway de mercado envia: ${MARKET_DATA_DISCLOSURE.fieldsSent.join(', ')}. Não envia perfil, saldos, quantidade, preço médio, movimentações ou dívidas.`]),
-        el('p', 'settings-help', [DEFAULT_PRIVACY_SUMMARY.ai])
-    ]);
-    const installCard = el('section', 'settings-card', [
-        el('div', 'settings-card-heading', [el('h2', '', ['Instalação'])]),
-        el('p', 'settings-help', [standaloneMode()
-                ? 'O Orion está aberto como PWA instalado. Safe areas e navegação usam o perfil standalone do dispositivo.'
-                : 'No iPhone, abra pelo Safari e use Compartilhar → Adicionar à Tela de Início → Abrir como App da Web.'])
-    ]);
-    root.append(profileCard, dataCard, privacyCard, diagnosticsCard, installCard);
+    root.append(profileCard, dataCard, supportCard);
     return root;
 }

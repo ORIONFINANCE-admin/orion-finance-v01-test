@@ -10,16 +10,17 @@ export async function openCreateAllocationSheet(context) {
         showToast('Cadastre uma conta antes de criar uma meta ou reserva.', 'error');
         return;
     }
-    const account = selectorField('Onde esse dinheiro está', accounts, accounts[0]?.value ?? null);
+    const defaultAccount = accounts.length === 1 ? accounts[0]?.value ?? null : null;
+    const account = selectorField('Onde esse dinheiro está', accounts, defaultAccount);
     const name = textField('Nome');
     name.placeholder = 'Ex.: Reserva de emergência';
     const amount = moneyField('Valor separado');
     const target = moneyField('Objetivo total');
     target.placeholder = 'Opcional';
     const goalDate = textField('Prazo', '', 'date');
-    const protection = selectorField('Esse valor reduz o Livre para decidir?', [
-        { value: 'yes', label: 'Sim, quero reservar', description: 'O Orion separa esse valor do que está livre para gastar.' },
-        { value: 'no', label: 'Não, só quero acompanhar', description: 'A meta aparece aqui, mas não reduz o valor livre.' }
+    const protection = selectorField('Quer reservar esse valor para não usar em outras coisas?', [
+        { value: 'yes', label: 'Sim, deixar separado', description: 'Esse valor deixa de aparecer como dinheiro livre para usar.' },
+        { value: 'no', label: 'Não, só acompanhar', description: 'A meta fica visível sem separar dinheiro do valor livre.' }
     ], 'yes');
     const form = el('form', 'form-stack', [account.element, labeledField('Nome', name), labeledField('Valor separado', amount),
         labeledField('Objetivo total (opcional)', target), labeledField('Prazo (opcional)', goalDate), protection.element]);

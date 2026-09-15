@@ -33,7 +33,7 @@ export function showOnboarding(repositories, profile, callbacks) {
     name.placeholder = 'Seu nome';
     let close = () => undefined;
     const renderWelcome = () => {
-        content.replaceChildren(el('div', 'onboarding-symbol', ['✦']), el('div', 'onboarding-step', ['PASSO 1 DE 3']), el('h3', '', ['Bem-vindo ao Orion']), el('p', '', ['Organize sua vida financeira com uma base local, auditável e preparada para crescer com você.']), labeledField('Como devemos chamar você?', name));
+        content.replaceChildren(el('div', 'onboarding-symbol', ['✦']), el('div', 'onboarding-step', ['PASSO 1 DE 3']), el('h3', '', ['Bem-vindo ao Orion']), el('p', '', ['Organize sua vida financeira de forma simples, com seus dados no próprio dispositivo e uma base preparada para crescer com você.']), labeledField('Como devemos chamar você?', name));
         actions.replaceChildren(button('btn primary full', 'Continuar', () => {
             try {
                 normalizedName(name.value);
@@ -158,7 +158,7 @@ export function showOnboarding(repositories, profile, callbacks) {
                 showToast('Sua primeira conta foi criada.', 'success');
             }).catch((error) => { save.disabled = false; showToast(error instanceof Error ? error.message : 'Não foi possível criar a conta.', 'error'); });
         });
-        content.replaceChildren(el('div', 'onboarding-step', ['PASSO 3 DE 3']), el('h3', '', ['Cadastre sua primeira conta']), el('p', '', ['O saldo inicial é o ponto de partida. Depois, toda alteração financeira entra como um fato auditável.']), institution.element, type.element, customInstitutionNameField, labeledField('Saldo inicial', openingBalance));
+        content.replaceChildren(el('div', 'onboarding-step', ['PASSO 3 DE 3']), el('h3', '', ['Cadastre sua primeira conta']), el('p', '', ['O saldo inicial é o ponto de partida. Depois, suas receitas, despesas e transferências ficam registradas no histórico.']), institution.element, type.element, customInstitutionNameField, labeledField('Saldo inicial', openingBalance));
         actions.replaceChildren(button('btn secondary full', 'Agora não', () => void finishWithoutAccount()), save);
     };
     renderWelcome();

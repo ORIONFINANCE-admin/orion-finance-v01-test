@@ -1,9 +1,9 @@
 import { getFinancialPosition } from '../../application/planning/get-financial-position.js';
-import { formatBRL, sumCents, ZERO_CENTS } from '../../domain/money/money.js';
+import { formatBRL, ZERO_CENTS } from '../../domain/money/money.js';
 import { el } from '../dom.js';
 import { icon } from '../icons.js';
 import { renderAllocationsSection, renderAssetsSection, renderCardsSection, renderDebtsSection, renderRecurrencesSection } from './planning/sections.js';
-export async function renderPlanning(repositories, profile, lifecycle, onChanged, onOpenInvestments) {
+export async function renderPlanning(repositories, profile, lifecycle, onChanged, _onOpenInvestments) {
     const position = await getFinancialPosition(repositories, profile.id);
     const context = { repositories, profile, lifecycle, onChanged };
     const root = el('div', 'screen planning-screen', [
@@ -29,25 +29,11 @@ export async function renderPlanning(repositories, profile, lifecycle, onChanged
         ]));
     }
     root.append(renderRecurrencesSection(context, position), renderDebtsSection(context, position), renderAllocationsSection(context, position));
-    const investmentHub = el('section', 'section-block investment-hub-card', [
-        el('div', 'section-title-row', [el('div', '', [
-                el('h2', '', ['Investimentos']),
-                el('p', 'section-support', ['Carteira, cotações e Radar ficam disponíveis quando você quiser aprofundar.'])
-            ])]),
-        el('div', 'investment-hub-summary', [
-            miniMetric('POSIÇÕES', String(position.investments.filter((item) => item.position.quantity > 0).length), 'Investimentos com saldo'),
-            miniMetric('VALOR', formatBRL(sumCents(position.investments.map((item) => item.currentValue))), 'Valor atual conhecido')
-        ])
-    ]);
-    const openInvestments = el('button', 'btn secondary full-width', ['Abrir Investimentos e Radar']);
-    openInvestments.type = 'button';
-    openInvestments.addEventListener('click', onOpenInvestments);
-    investmentHub.append(openInvestments);
     const moreResources = el('details', 'planning-advanced', [
         el('summary', 'planning-advanced-summary', [
             el('span', 'planning-advanced-copy', [
                 el('strong', '', ['Mais recursos']),
-                el('small', '', ['Patrimônio, cartões, investimentos e controles mais detalhados.'])
+                el('small', '', ['Patrimônio, cartões e outros controles que você pode usar quando precisar.'])
             ]),
             el('span', 'planning-advanced-chevron', [icon('chevron', 'planning-advanced-chevron-icon')])
         ]),
@@ -58,7 +44,6 @@ export async function renderPlanning(repositories, profile, lifecycle, onChanged
                 miniMetric('DINHEIRO E INVESTIMENTOS', formatBRL(position.netWorth.assets), 'Valores que formam seu patrimônio')
             ]),
             renderCardsSection(context, position),
-            investmentHub,
             renderAssetsSection(context, position)
         ])
     ]);

@@ -36,7 +36,7 @@ export async function renderHome(repositories, profile, actions) {
             metric('Resultado', formatBRL(snapshot.resultMonth), snapshot.resultMonth >= 0 ? 'positive' : 'negative'),
             metric('Livre para decidir*', formatBRL(snapshot.freeToDecide), 'accent')
         ]),
-        el('small', 'metric-note', ['*Disponível menos compromissos previstos e alocações ativas.'])
+        el('small', 'metric-note', ['*Disponível menos compromissos previstos e valores reservados para metas.'])
     ]);
     const accountsSection = el('section', 'section-block');
     const openAccounts = el('button', 'text-action', [snapshot.accounts.length ? 'Ver todas' : 'Adicionar']);

@@ -3,29 +3,49 @@ import { updateRecurrenceMonth } from '../../../application/recurrences/update-r
 import { linkRecurrencePayment, listRecurrencePaymentCandidates, unlinkRecurrencePayment } from '../../../application/recurrences/payment-link.js';
 import { formatBRL } from '../../../domain/money/money.js';
 import { el } from '../../dom.js';
+import { icon } from '../../icons.js';
 import { labeledField, moneyField, selectorField, textField } from '../../components/fields.js';
 import { showConfirmation, showSheet } from '../../components/sheets.js';
 import { showToast } from '../../components/feedback.js';
 import { accountOptions, currentMonth } from './shared.js';
 export async function openCreateRecurrenceSheet(context) {
     const accounts = await accountOptions(context);
-    const kind = selectorField('Tipo', [{ value: 'expense', label: 'Despesa prevista' }, { value: 'income', label: 'Receita prevista' }], 'expense');
+    const kind = selectorField('Este compromisso é', [
+        { value: 'expense', label: 'Conta a pagar' },
+        { value: 'income', label: 'Dinheiro a receber' }
+    ], 'expense');
     const account = selectorField('Conta associada', [{ value: '', label: 'Sem conta definida' }, ...accounts], '');
-    const priority = selectorField('Prioridade', [{ value: 'essential', label: 'Essencial' }, { value: 'flexible', label: 'Flexível' }], 'essential');
-    const name = textField('Nome');
+    const priority = selectorField('Importância', [
+        { value: 'essential', label: 'Essencial' },
+        { value: 'flexible', label: 'Flexível' }
+    ], 'essential');
+    const name = textField('O que é?');
     name.placeholder = 'Ex.: Internet';
-    const amount = moneyField('Valor previsto');
+    const amount = moneyField('Valor');
     const day = textField('Dia do mês');
     day.inputMode = 'numeric';
     day.placeholder = '10';
-    const start = textField('Mês inicial');
+    const start = textField('Começa em');
     start.type = 'month';
     start.value = currentMonth();
-    const end = textField('Mês final');
+    const end = textField('Termina em');
     end.type = 'month';
     const note = textField('Observação');
-    const form = el('form', 'form-stack', [kind.element, priority.element, labeledField('Nome', name), labeledField('Valor previsto', amount),
-        labeledField('Dia de vencimento', day), labeledField('Mês inicial', start), labeledField('Mês final (opcional)', end), account.element, labeledField('Observação', note)]);
+    const advanced = el('details', 'form-disclosure', [
+        el('summary', 'form-disclosure-summary', [
+            el('span', '', [el('strong', '', ['Mais detalhes']), el('small', '', ['Conta, período e outras opções.'])]),
+            el('span', 'form-disclosure-chevron', [icon('chevron', 'form-disclosure-chevron-icon')])
+        ]),
+        el('div', 'form-disclosure-content form-stack', [priority.element, account.element, labeledField('Começa em', start), labeledField('Termina em (opcional)', end), labeledField('Observação', note)])
+    ]);
+    const form = el('form', 'form-stack', [
+        el('p', 'form-support', ['Para começar, informe o que é, o valor e o dia do mês.']),
+        kind.element,
+        labeledField('O que é?', name),
+        labeledField('Valor', amount),
+        labeledField('Dia do mês', day),
+        advanced
+    ]);
     const save = el('button', 'btn primary full-width', ['Salvar compromisso']);
     save.type = 'submit';
     form.append(save);

@@ -75,3 +75,24 @@
 .form-disclosure-summary::-webkit-details-marker{display:none}.form-disclosure-summary strong{display:block;font-size:10px}.form-disclosure-summary small{display:block;margin-top:3px;color:#7f94ab;font-size:8px;line-height:1.4}
 .form-disclosure-chevron{width:30px;height:30px;display:grid;place-items:center;flex:0 0 30px;border:1px solid rgba(77,124,173,.28);border-radius:9px;background:rgba(41,147,255,.04);color:#8aaac8;transition:transform .16s ease,border-color .16s ease,background .16s ease,color .16s ease}.form-disclosure-chevron-icon{width:14px;height:14px;stroke-width:1.9}.form-disclosure[open] .form-disclosure-chevron{transform:rotate(180deg);border-color:rgba(41,147,255,.38);background:rgba(41,147,255,.09);color:#67b4ff}.form-disclosure-summary:focus-visible{outline:2px solid rgba(69,200,255,.72);outline-offset:-2px;border-radius:12px}
 .form-disclosure-content{padding:12px;border-top:1px solid rgba(76,122,170,.17)}
+
+/* Fase 12.12 — opções voltadas ao usuário final */
+.settings-help-prominent{font-size:9px;color:#9fb0c2}
+.settings-card-compact{padding:0;overflow:hidden}
+.settings-disclosure{border:1px solid rgba(76,122,170,.22);border-radius:14px;background:rgba(255,255,255,.012);overflow:hidden}
+.settings-card-compact>.settings-disclosure{border:0;border-radius:0;background:transparent}
+.settings-disclosure-summary{list-style:none;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;cursor:pointer;user-select:none}
+.settings-disclosure-summary::-webkit-details-marker{display:none}
+.settings-disclosure-copy{display:grid;gap:2px;min-width:0}
+.settings-disclosure-copy strong{font-size:10px}
+.settings-disclosure-copy small{font-size:8px;line-height:1.35;color:#8196ad}
+.settings-disclosure-chevron{width:30px;height:30px;display:grid;place-items:center;flex:0 0 30px;border:1px solid rgba(77,124,173,.28);border-radius:9px;background:rgba(41,147,255,.04);color:#8aaac8;transition:transform .16s ease,border-color .16s ease,background .16s ease,color .16s ease}
+.settings-disclosure-chevron-icon{width:14px;height:14px;stroke-width:1.9}
+.settings-disclosure[open] .settings-disclosure-chevron{transform:rotate(180deg);border-color:rgba(41,147,255,.38);background:rgba(41,147,255,.09);color:#67b4ff}
+.settings-disclosure-summary:focus-visible{outline:2px solid rgba(69,200,255,.72);outline-offset:-2px;border-radius:12px}
+.settings-disclosure-content{display:grid;gap:10px;padding:0 12px 12px}
+.settings-simple-info{display:grid;gap:6px}
+.settings-simple-info>div{display:flex;justify-content:space-between;gap:16px;align-items:center;padding:8px 0;border-bottom:1px solid rgba(76,122,170,.16)}
+.settings-simple-info>div:last-child{border-bottom:0}
+.settings-simple-info span{font-size:8px;color:#8095ac}
+.settings-simple-info strong{font-size:9px;text-align:right;word-break:break-word}

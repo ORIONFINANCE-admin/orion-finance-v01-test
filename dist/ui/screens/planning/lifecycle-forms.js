@@ -62,13 +62,13 @@ export function openEditDebtSheet(context, debt) {
     hasOffer.element.addEventListener('selectorchange', () => {
         offerFields.hidden = hasOffer.getValue() !== 'yes';
     });
-    const priority = selectorField('Como você quer tratar essa dívida?', [
-        { value: 'high', label: 'Quero priorizar' },
-        { value: 'medium', label: 'Prioridade normal' },
+    const priority = selectorField('Qual a urgência desta dívida?', [
+        { value: 'high', label: 'Quero pagar primeiro' },
+        { value: 'medium', label: 'Normal' },
         { value: 'low', label: 'Pode esperar' }
     ], debt.priority ?? null);
     const note = textField('Observação', debt.note ?? '');
-    const warning = el('div', 'inline-warning', ['O saldo-base (valor inicial registrado), os juros e o tipo ficam preservados. Os pagamentos continuam atualizando quanto ainda falta pagar.']);
+    const warning = el('div', 'inline-warning', ['O valor inicial e os pagamentos já registrados ficam preservados. O Orion continua calculando quanto falta pagar.']);
     const advanced = el('details', 'form-disclosure', [
         el('summary', 'form-disclosure-summary', [
             el('span', '', [el('strong', '', ['Mais detalhes']), el('small', '', ['Prioridade e observações opcionais.'])]),
@@ -134,9 +134,9 @@ export function openEditAssetSheet(context, asset) {
     });
 }
 export function openEditAllocationSheet(context, allocation) {
-    const protection = selectorField('Esse valor reduz o Livre para decidir?', [
-        { value: 'yes', label: 'Sim, quero reservar', description: 'O Orion separa esse valor do que está livre para gastar.' },
-        { value: 'no', label: 'Não, só quero acompanhar', description: 'A meta continua visível sem reduzir o valor livre.' }
+    const protection = selectorField('Quer reservar esse valor para não usar em outras coisas?', [
+        { value: 'yes', label: 'Sim, deixar separado', description: 'Esse valor deixa de aparecer como dinheiro livre para usar.' },
+        { value: 'no', label: 'Não, só acompanhar', description: 'A meta fica visível sem separar dinheiro do valor livre.' }
     ], allocation.protected ? 'yes' : 'no');
     const name = textField('Nome', allocation.name);
     const amount = moneyField('Valor separado');
@@ -167,21 +167,32 @@ export function openEditAllocationSheet(context, allocation) {
 export async function openEditRecurrenceSheet(context, recurrence) {
     const accounts = await accountOptions(context);
     const account = selectorField('Conta associada', [{ value: '', label: 'Sem conta definida' }, ...accounts], recurrence.accountId ?? '');
-    const priority = selectorField('Prioridade', [
+    const priority = selectorField('Importância', [
         { value: 'essential', label: 'Essencial' }, { value: 'flexible', label: 'Flexível' }
     ], recurrence.priority ?? 'essential');
-    const name = textField('Nome', recurrence.name);
-    const amount = moneyField('Valor previsto');
+    const name = textField('O que é?', recurrence.name);
+    const amount = moneyField('Valor');
     amount.value = centsToInput(recurrence.amount);
     const day = textField('Dia do mês', String(recurrence.dayOfMonth));
     day.inputMode = 'numeric';
-    const end = textField('Mês final');
+    const end = textField('Termina em');
     end.type = 'month';
     end.value = recurrence.endMonth ?? '';
     const note = textField('Observação', recurrence.note ?? '');
-    const warning = el('div', 'inline-warning', [`Início preservado em ${recurrence.startMonth}. A edição vale para a recorrência daqui em diante sem reescrever meses já registrados.`]);
-    const form = el('form', 'form-stack', [priority.element, labeledField('Nome', name), labeledField('Valor previsto', amount),
-        labeledField('Dia de vencimento', day), labeledField('Mês final (opcional)', end), account.element, labeledField('Observação', note), warning]);
+    const warning = el('div', 'inline-warning', [`As alterações valem daqui para frente. Os meses já registrados desde ${recurrence.startMonth} não serão alterados.`]);
+    const advanced = el('details', 'form-disclosure', [
+        el('summary', 'form-disclosure-summary', [
+            el('span', '', [el('strong', '', ['Mais detalhes']), el('small', '', ['Conta, importância e término opcional.'])]),
+            el('span', 'form-disclosure-chevron', [icon('chevron', 'form-disclosure-chevron-icon')])
+        ]),
+        el('div', 'form-disclosure-content form-stack', [priority.element, account.element, labeledField('Termina em (opcional)', end), labeledField('Observação', note), warning])
+    ]);
+    const form = el('form', 'form-stack', [
+        labeledField('O que é?', name),
+        labeledField('Valor', amount),
+        labeledField('Dia do mês', day),
+        advanced
+    ]);
     const save = submitButton('Salvar alterações');
     form.append(save);
     const close = showSheet('Editar compromisso', form);
@@ -192,7 +203,7 @@ export async function openEditRecurrenceSheet(context, recurrence) {
             profileId: context.profile.id, recurrenceId: recurrence.id, name: name.value, amount: amount.value, dayOfMonth: Number(day.value),
             ...(end.value ? { endMonth: end.value } : {}), ...(priority.getValue() ? { priority: priority.getValue() } : {}),
             ...(note.value.trim() ? { note: note.value.trim() } : {}), ...(account.getValue() ? { accountId: account.getValue() } : {})
-        }).then(() => done(close, 'Recorrência atualizada.', context)).catch((error) => fail(save, error, 'Falha ao atualizar recorrência.'));
+        }).then(() => done(close, 'Compromisso atualizado.', context)).catch((error) => fail(save, error, 'Falha ao atualizar recorrência.'));
     });
 }
 function submitButton(label) {

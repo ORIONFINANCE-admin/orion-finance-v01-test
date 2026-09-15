@@ -73,7 +73,7 @@ export function renderDebtsSection(context, position) {
 export function renderAssetsSection(context, position) {
     const section = el('section', 'section-block module-section', [sectionHeader('Ativos', actionButton('+ Ativo', () => openCreateAssetSheet(context)))]);
     if (position.assets.length === 0) {
-        section.append(empty('Investimentos e garantias aparecem aqui.'));
+        section.append(empty('Garantias e outros bens financeiros aparecem aqui.'));
         return section;
     }
     const list = el('div', 'module-list');

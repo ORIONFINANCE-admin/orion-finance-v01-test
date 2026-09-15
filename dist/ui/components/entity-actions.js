@@ -29,7 +29,7 @@ export function showEntityActions(title, onEdit, onDeactivate, extraActions = []
     deactivate.addEventListener('click', () => { close(); onDeactivate(); });
 }
 export function confirmEntityDeactivation(gateway, profileId, entityType, entityId, label, onChanged) {
-    showConfirmation(`Desativar ${label}?`, 'O histórico financeiro será preservado. Esta alteração é auditada e poderá ser desfeita imediatamente.', 'Desativar', () => {
+    showConfirmation(`Desativar ${label}?`, 'Esse item deixará de aparecer no uso atual, mas o histórico será mantido. Você poderá desfazer logo em seguida.', 'Desativar', () => {
         void deactivateEntity(gateway, profileId, entityType, entityId).then((event) => {
             onChanged();
             showActionToast(`${label} desativado.`, 'Desfazer', () => {

@@ -33,9 +33,9 @@ export function openCreateDebtSheet(context) {
         { value: 'tax', label: 'Imposto ou tributo' },
         { value: 'other', label: 'Outro tipo' }
     ], null);
-    const priority = selectorField('Como você quer tratar essa dívida?', [
-        { value: 'high', label: 'Quero priorizar' },
-        { value: 'medium', label: 'Prioridade normal' },
+    const priority = selectorField('Qual a urgência desta dívida?', [
+        { value: 'high', label: 'Quero pagar primeiro' },
+        { value: 'medium', label: 'Normal' },
         { value: 'low', label: 'Pode esperar' }
     ], null);
     const baseDate = textField('Saldo atualizado em', todayISO(), 'date');
@@ -108,7 +108,8 @@ export async function openPayDebtSheet(context, debtId, outstandingLabel) {
         showToast('Cadastre uma conta antes de pagar dívida.', 'error');
         return;
     }
-    const account = selectorField('Conta usada no pagamento', accounts, accounts[0]?.value ?? null);
+    const defaultAccount = accounts.length === 1 ? accounts[0]?.value ?? null : null;
+    const account = selectorField('Conta usada no pagamento', accounts, defaultAccount);
     const amount = moneyField('Quanto você pagou?');
     amount.placeholder = outstandingLabel;
     const date = textField('Quando pagou?', todayISO(), 'date');
