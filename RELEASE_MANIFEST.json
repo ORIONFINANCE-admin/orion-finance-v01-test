@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "product": "Orion Finance",
-  "appVersion": "0.1.0-development.12.9",
+  "appVersion": "0.1.0-development.12.11",
   "phase": 12,
   "classification": "PWA TESTÁVEL — PODE IR AO GITHUB PARA TESTE",
   "runtimeOnly": true,
@@ -25,8 +25,8 @@
     },
     {
       "path": "dist/app/version.js",
-      "bytes": 189,
-      "sha256": "02496245c44395432d702a283611fa43d3432063a3e1d9bf8891e0232535a001"
+      "bytes": 190,
+      "sha256": "ba4f077bae687c1ab84e663e8acf857fc4433b8f20c6ac0469f0b63ad374474e"
     },
     {
       "path": "dist/application/accounts/create-account.js",
@@ -252,6 +252,11 @@
       "path": "dist/config/runtime.js",
       "bytes": 1895,
       "sha256": "af2f30c06b42bf440e6181940c8a8b0fd002473cb2a00525ba00a9c08995023d"
+    },
+    {
+      "path": "dist/data/backup/fresh-profile.js",
+      "bytes": 578,
+      "sha256": "47f49b967bcb5a310eda024e66963c6e88614a845d803329467bf34d660d3b32"
     },
     {
       "path": "dist/data/backup/model.js",
@@ -600,8 +605,8 @@
     },
     {
       "path": "dist/ui/components/system-status.js",
-      "bytes": 1371,
-      "sha256": "47e4eb544ec8d46b8c4271b9dff4a4b5af075101ab3df35afe2a25cb6778de2e"
+      "bytes": 1908,
+      "sha256": "bde1fe507ee335b55ee3e41f99226c6fcd9c5e9d0553dae9825d51ff6e534de0"
     },
     {
       "path": "dist/ui/dom.js",
@@ -705,8 +710,8 @@
     },
     {
       "path": "dist/ui/screens/settings.js",
-      "bytes": 11854,
-      "sha256": "4584e30901a4954b085d9ee97b3b132ec413b5d25b3894cd6f61562d904e6ffc"
+      "bytes": 13090,
+      "sha256": "9087c977ca6f0ba547c329c1dbe8208a0bab7235219d7da46bdf1b04992182de"
     },
     {
       "path": "dist/ui/shell.js",
@@ -730,8 +735,8 @@
     },
     {
       "path": "service-worker.js",
-      "bytes": 8275,
-      "sha256": "20bd547d4d3c70c41f4f0866093e9729039f829a780af9622eb35f2e96a2ea37"
+      "bytes": 8298,
+      "sha256": "8943541a17c24cb7c9d9e93a7ff4197548d5699d82607b062725c4ef98a9f65f"
     },
     {
       "path": "styles/base.css",
@@ -740,8 +745,8 @@
     },
     {
       "path": "styles/components.css",
-      "bytes": 11278,
-      "sha256": "438d2b6911010ba7775875961aa7ccf794d84ff307e5e917e87f5d7334bd61f3"
+      "bytes": 11281,
+      "sha256": "5f6a8c99e7976e0c6a3fe023d06685acc11b3a0293c545bc56962f893119b326"
     },
     {
       "path": "styles/screens.css",

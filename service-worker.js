@@ -1,4 +1,4 @@
-const CACHE_NAME = "orion-0-1-0-development-12-9-static-v1";
+const CACHE_NAME = "orion-0-1-0-development-12-11-static-v1";
 const STATIC_PATHS = [
   "./",
   "./index.html",
@@ -55,6 +55,7 @@ const STATIC_PATHS = [
   "./dist/catalog/account-types.js",
   "./dist/catalog/institutions.js",
   "./dist/config/runtime.js",
+  "./dist/data/backup/fresh-profile.js",
   "./dist/data/backup/model.js",
   "./dist/data/backup/profile.js",
   "./dist/data/backup/rebind.js",
@@ -195,8 +196,6 @@ self.addEventListener('fetch', (event) => {
   }
 
   event.respondWith((async () => {
-    const cached = await caches.match(event.request);
-    if (cached) return cached;
     try {
       const response = await fetch(event.request);
       if (response.ok) {
@@ -205,7 +204,8 @@ self.addEventListener('fetch', (event) => {
       }
       return response;
     } catch {
-      return Response.error();
+      const cached = await caches.match(event.request);
+      return cached ?? Response.error();
     }
   })());
 });

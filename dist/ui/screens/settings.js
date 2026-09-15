@@ -6,6 +6,7 @@ import { serializeBackup } from '../../data/backup/model.js';
 import { parseBackup } from '../../data/backup/validate.js';
 import { rebindSingleProfileBackup } from '../../data/backup/rebind.js';
 import { replaceProfileDataAtomically } from '../../data/backup/restore.js';
+import { createFreshProfileData } from '../../data/backup/fresh-profile.js';
 import { readJsonDocument } from '../../data/import/json-document.js';
 import { applyPreparedLegacyMigration, prepareLegacyMigration } from '../../migration/legacy/apply.js';
 import { listDiagnostics } from '../../diagnostics/session-log.js';
@@ -100,12 +101,28 @@ export async function renderSettings(repositories, profile, onProfileChanged, on
         }).catch((error) => showToast(error instanceof Error ? error.message : 'Backup legado incompatível.', 'error'));
         legacyInput.value = '';
     });
+    const resetButton = button('btn secondary full', 'Recomeçar com uma base nova', () => {
+        showConfirmation('Recomeçar com uma base nova?', 'O Orion exportará um backup antes de apagar os dados deste perfil. Depois, o onboarding será aberto novamente para você começar com seus dados reais.', 'Exportar backup e recomeçar', () => {
+            resetButton.disabled = true;
+            void createProfileBackup(repositories, profile).then(async (backup) => {
+                const day = new Date().toISOString().slice(0, 10);
+                downloadTextFile(`orion-antes-de-recomecar-${day}.json`, serializeBackup(backup));
+                await replaceProfileDataAtomically(profile.id, createFreshProfileData(profile));
+                window.location.reload();
+            }).catch((error) => {
+                resetButton.disabled = false;
+                showToast(error instanceof Error ? error.message : 'Falha ao preparar uma base nova.', 'error');
+            });
+        });
+    });
     const dataCard = el('section', 'settings-card', [
         el('div', 'settings-card-heading', [el('h2', '', ['Seus dados'])]),
         el('p', 'settings-help', ['Backup, restauração e exportação pertencem ao usuário e não dependem de plano futuro.']),
         exportButton,
         button('btn secondary full', 'Restaurar backup v0.1', () => fileInput.click()),
         button('btn secondary full', 'Migrar Orion anterior (JSON/ZIP)', () => legacyInput.click()),
+        resetButton,
+        el('p', 'settings-help', ['Recomeçar exporta uma cópia de segurança antes de limpar somente os dados deste perfil.']),
         fileInput,
         legacyInput
     ]);
