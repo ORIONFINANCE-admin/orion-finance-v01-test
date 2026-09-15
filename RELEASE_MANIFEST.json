@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "product": "Orion Finance",
-  "appVersion": "0.1.0-development.12.8",
+  "appVersion": "0.1.0-development.12.9",
   "phase": 12,
   "classification": "PWA TESTÁVEL — PODE IR AO GITHUB PARA TESTE",
   "runtimeOnly": true,
@@ -26,7 +26,7 @@
     {
       "path": "dist/app/version.js",
       "bytes": 189,
-      "sha256": "29deca349d9c0b8adf87deba76c688de4fba3223da1f66043452faa023e2d97f"
+      "sha256": "02496245c44395432d702a283611fa43d3432063a3e1d9bf8891e0232535a001"
     },
     {
       "path": "dist/application/accounts/create-account.js",
@@ -265,8 +265,8 @@
     },
     {
       "path": "dist/data/backup/rebind.js",
-      "bytes": 1459,
-      "sha256": "3313e3b19bf7608108a857cefaa5baf831b895fe41e51b24b29ef1943c9da976"
+      "bytes": 1610,
+      "sha256": "c24e840e5b06f38df1e9d3d7a43895664d0be7a9df9416b7577cd4ddfe6a545b"
     },
     {
       "path": "dist/data/backup/restore.js",
@@ -705,8 +705,8 @@
     },
     {
       "path": "dist/ui/screens/settings.js",
-      "bytes": 11685,
-      "sha256": "575f6c41b7450277cf1fa87849f5c359990390a9957ef345d7730e98649c65dd"
+      "bytes": 11854,
+      "sha256": "4584e30901a4954b085d9ee97b3b132ec413b5d25b3894cd6f61562d904e6ffc"
     },
     {
       "path": "dist/ui/shell.js",
@@ -731,7 +731,7 @@
     {
       "path": "service-worker.js",
       "bytes": 8275,
-      "sha256": "1a7b11ace2edf7f13ef1b4b098077867b7b9fcf1756d1b2df62256d7c1f47673"
+      "sha256": "20bd547d4d3c70c41f4f0866093e9729039f829a780af9622eb35f2e96a2ea37"
     },
     {
       "path": "styles/base.css",

@@ -62,8 +62,11 @@ export async function renderSettings(repositories, profile, onProfileChanged, on
         void readJsonDocument(file).then((raw) => {
             const parsed = parseBackup(raw);
             const rebound = rebindSingleProfileBackup(parsed.data, profile);
-            showConfirmation('Restaurar backup?', 'Os dados financeiros deste perfil serão substituídos de forma atômica. O cache de mercado e outros perfis não serão apagados.', 'Restaurar', () => {
+            showConfirmation('Restaurar backup?', 'Os dados e preferências deste perfil serão substituídos de forma atômica. O cache de mercado e outros perfis não serão apagados.', 'Restaurar', () => {
                 void replaceProfileDataAtomically(profile.id, rebound).then(() => {
+                    const restoredProfile = rebound.profiles[0];
+                    if (restoredProfile)
+                        onProfileChanged(restoredProfile);
                     showToast('Backup restaurado com segurança.', 'success');
                     onDataChanged();
                 }).catch((error) => showToast(error instanceof Error ? error.message : 'Falha ao restaurar backup.', 'error'));

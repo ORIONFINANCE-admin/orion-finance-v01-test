@@ -16,8 +16,11 @@ export function rebindSingleProfileBackup(data, target) {
     if (!sourceId)
         throw new TypeError('Backup sem perfil de origem.');
     const remap = (items) => items.map((item) => ({ ...item, profileId: target.id }));
+    const sourceProfile = data.profiles[0];
+    if (!sourceProfile)
+        throw new TypeError('Backup sem perfil de origem.');
     return {
-        profiles: [{ ...target, updatedAt: new Date().toISOString() }],
+        profiles: [{ ...sourceProfile, id: target.id, updatedAt: new Date().toISOString() }],
         accounts: remap(data.accounts),
         transactions: remap(data.transactions),
         creditCards: remap(data.creditCards),
